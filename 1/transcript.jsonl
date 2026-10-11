@@ -1,0 +1,2 @@
+{"v":1,"agent":"claude-code","cli_version":"0.11.4","type":"user","ts":"2026-10-11T13:19:11.278Z","content":[{"id":"b1ec3bdb-182f-4512-89e5-cc6991fee645","text":"reply with the single word ok"}]}
+{"v":1,"agent":"claude-code","cli_version":"0.11.4","type":"assistant","ts":"2026-10-11T13:19:12.848Z","id":"d64c1d5e-22a9-429a-be0f-4a4489880d03","content":[{"text":"Failed to authenticate: OAuth session expired and could not be refreshed","type":"text"}]}
