@@ -1,0 +1,7 @@
+<task-notification>
+<task-id>bx5qdf5un</task-id>
+<tool-use-id>toolu_016gESaJDJbC8Vg6v2g5XvXq</tool-use-id>
+<output-file>C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-receipts\88462877-3c46-4f71-be91-c0af4af70096\tasks\bx5qdf5un.output</output-file>
+<status>completed</status>
+<summary>Background command "Measure v3 with committed policy rules on stress seeds" completed (exit code 0)</summary>
+</task-notification>
