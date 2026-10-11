@@ -40,7 +40,7 @@ $0.0047 per case
 **5/**
 Not a trust score for the agent. A receipt for every sentence.
 
-Every fix commit cites the trace that triggered it, and @EntireHQ checkpoints the session behind it. Billing runs on @dodopayments: a bank pays only for replies the verifier proved, and each invoice line carries its trace id.
+Every fix commit cites the trace that triggered it, and @EntireHQ checkpoints the session behind it. A bank pays only for replies the verifier proved, and every statement line carries its trace id. Our first billing partner couldn't onboard a Nigerian business, the same wall our customers hit, so we collect through Bachs, built for African businesses.
 
 Try a case: https://receipts-tau-liard.vercel.app
 Code: https://github.com/Demiladepy/receipts

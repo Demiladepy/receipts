@@ -2,10 +2,12 @@
 
 Provider-independent statement, then an invoice on whichever provider can serve the
 business. Dodo Payments was the first choice; it could not onboard a Nigerian
-business, so invoices go through Paystack. The Dodo adapter stays for where it can.
+business, so collection goes through Bachs (built for African software companies,
+settles in NGN). Paystack and Dodo adapters stay as alternatives.
 
     python -m billing statement runs/v3-policy-stress-x3.jsonl --period 2026-10
-    python -m billing invoice billing/statements/2026-10-v3-policy-stress-x3.json --email ... --name ...
+    python -m billing invoice billing/statements/2026-10-v3-policy-stress-x3.json             # Bachs checkout
+    python -m billing invoice <statement.json> --provider paystack                           # Paystack invoice
     python -m billing preview runs/v3-stress-x3.jsonl runs/v3-policy-stress-x3.jsonl
 
     python -m billing setup | send <runs.jsonl>      # Dodo Payments usage metering (test mode)
@@ -114,7 +116,7 @@ def main() -> None:
     st.add_argument("--customer", default="Harbor Bank (simulated)")
     inv = sub.add_parser("invoice")
     inv.add_argument("statement", type=Path)
-    inv.add_argument("--provider", choices=["paystack"], default="paystack")
+    inv.add_argument("--provider", choices=["bachs", "paystack"], default="bachs")
     inv.add_argument("--email", default="disputes@harborbank.test")
     inv.add_argument("--name", default="Harbor Bank")
     args = parser.parse_args()
@@ -129,9 +131,16 @@ def main() -> None:
         print(f"wrote {path.relative_to(Path.cwd()) if path.is_relative_to(Path.cwd()) else path}")
         return
     if args.cmd == "invoice":
+        stmt = json.loads(args.statement.read_text(encoding="utf-8"))
+        if args.provider == "bachs":
+            from billing import bachs
+
+            result = bachs.checkout(stmt, email=args.email, name=args.name)
+            print(f"Bachs checkout {result['checkout_id']} ({result['status']}): {result['checkout_url']}")
+            print(f"statement sha256 {result['statement_sha256']}")
+            return
         from billing import paystack
 
-        stmt = json.loads(args.statement.read_text(encoding="utf-8"))
         result = paystack.invoice(stmt, email=args.email, name=args.name)
         print(f"Paystack draft payment request {result['request_code']} ({result['status']}) "
               f"for {result['amount']} kobo, customer {result['customer_code']}")

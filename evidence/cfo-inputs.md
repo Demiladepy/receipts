@@ -19,8 +19,8 @@ Floor for escalations: about 30% of cases genuinely need a person in this mix (o
 
 - **Unit:** one proved resolution. A bank pays only when the verifier allowed the reply and no human was needed; escalations are free and listed on the statement, so the bank sees its own human queue.
 - **Statement:** `python -m billing statement` lists every billable case with its neatlogs trace id. Example from the 90 policy runs: 51 × NGN 2,000.00 = **NGN 102,000.00**, 39 escalations free (`billing/statements/2026-10-v3-policy-stress-x3.json`).
-- **Provider:** Paystack Payment Requests (invoices in NGN). Dodo Payments was the first choice and is integrated, but it could not onboard a Nigerian business. The same "not available in your country" wall is one Nigerian customers hit every day, so the billing layer is provider-independent.
-- **Payment fee (assumption from published third-party guides; confirm on paystack.com/pricing):** local card 1.5% + NGN 100, capped at NGN 2,000 per payment. On a monthly invoice of NGN 102,000 that is about NGN 1,630.
+- **Provider:** Bachs, a billing platform for African software companies that settles in NGN: one hosted checkout per monthly statement. Dodo Payments was the first choice and is integrated, but it could not onboard a Nigerian business. The same "not available in your country" wall is one Nigerian customers hit every day, so the billing layer is provider-independent (a Paystack adapter is built too).
+- **Payment fee (assumption from a single third-party article; confirm with Bachs):** 1.5% capped at NGN 2,000 for local NGN transfers. On a monthly statement of NGN 102,000 that is NGN 1,530.
 
 ## Assumptions to set in the model (label them as assumptions)
 
@@ -36,7 +36,7 @@ Floor for escalations: about 30% of cases genuinely need a person in this mix (o
 >
 > Measured from 90 test runs: model cost per case is $0.0045. 43% of cases still go to a human after two policy decisions (66% before them), and the floor is about 30%. There were 0 false claims sent and 0 harmful reversals.
 >
-> Pricing: the bank pays NGN 2,000 per proved resolution (assumption). Escalations are free. Invoices go out monthly through Paystack at 1.5% + NGN 100 per payment, capped at NGN 2,000 (assumption, from published rates).
+> Pricing: the bank pays NGN 2,000 per proved resolution (assumption). Escalations are free. The bank pays a monthly statement through a Bachs checkout; the fee is 1.5% capped at NGN 2,000 (assumption, unconfirmed with Bachs).
 >
 > Please build a monthly model with Base, Downside and Upside scenarios from October 2026 to December 2027, with my assumptions marked: complaints per bank per month, banks added per month, churn, human reviewer cost per escalated case, platform cost, USD/NGN rate.
 >

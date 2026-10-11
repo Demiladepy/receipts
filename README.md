@@ -83,7 +83,7 @@ python -m policy.ask_once replay --seed 22                                    # 
 - **neatlogs**: every run is a trace (AGENT case span, a TOOL span per tool call, a CHAIN span per verifier check, model calls via `neatlogs.wrap`). The three prompts are versions of the managed prompt `receipts-agent`, and the `production` label moved v1 → v2 → v3.
 - **Entire**: every commit carries an `Entire-Checkpoint` trailer. Fix commits cite the neatlogs trace that triggered them.
 - **cfo.ai**: pricing, cost and runway, with cost per case measured from these runs.
-- **Billing**: a bank pays per proved resolution; every statement line names its neatlogs trace. Invoices go through Paystack (NGN). A Dodo Payments metering adapter is also built, but Dodo could not onboard a Nigerian business.
+- **Billing**: a bank pays per proved resolution; every statement line names its neatlogs trace. Collection runs on Bachs (NGN checkout for each monthly statement); Paystack and Dodo Payments adapters are also built. Dodo could not onboard a Nigerian business.
 - **Claude Code**: wrote most of this repo, and at runtime it is the ask-once policy writer.
 
 The banks are simulated. Chaos comes from the seed, so every run is reproducible.

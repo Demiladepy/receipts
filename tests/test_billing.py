@@ -82,3 +82,42 @@ def test_paystack_invoice_is_a_quiet_draft_with_one_line_per_resolution():
     assert body["send_notification"] is False and body["draft"] is True and body["currency"] == "NGN"
     assert len(body["line_items"]) == 2 and "trace abc123" in body["line_items"][0]["name"]
     assert body["amount"] == sum(i["amount"] for i in body["line_items"])
+
+
+def test_bachs_checkout_charges_the_statement_count_and_pins_its_digest(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+
+    from billing import bachs, dodo
+    from billing.statement import build
+
+    monkeypatch.setattr(bachs, "CONFIG_PATH", tmp_path / "config.json")
+    calls = {}
+
+    class Fake:
+        products = SimpleNamespace(create_product=lambda **kw: calls.setdefault("product", kw) and SimpleNamespace(id="prod_1"))
+        customers = SimpleNamespace(
+            list_customers=lambda **kw: SimpleNamespace(data=[]),
+            create_customer=lambda **kw: calls.setdefault("customer", kw) and SimpleNamespace(customer_id="cus_1"))
+        checkouts = SimpleNamespace(create_checkout_session=lambda **kw: calls.setdefault("checkout", kw) and SimpleNamespace(
+            checkout_id="chk_1", checkout_url="https://sandbox.bachs.io/c/chk_1", status="open"))
+
+    stmt = build([record(), record(trace_id="t2"), record(trace_id="t3", escalation={"x": 1})],
+                 customer="Bank", period="2026-10", source="x")
+    result = bachs.checkout(stmt, email="d@bank.test", name="Harbor Bank", bachs=Fake())
+    assert calls["product"]["price"] == {"currency": "NGN", "price_type": "fixed", "amount": "2000.00"}
+    assert calls["checkout"]["product_cart"] == [{"product_id": "prod_1", "quantity": 2}]
+    assert calls["checkout"]["billing_currency"] == "NGN"
+    assert calls["checkout"]["metadata"]["statement_sha256"] == result["statement_sha256"] == bachs.statement_digest(stmt)
+    assert result["checkout_url"].startswith("https://sandbox")
+
+
+def test_bachs_refuses_live_keys(monkeypatch):
+    import pytest
+
+    from billing import bachs
+
+    monkeypatch.setenv("BACHS_API_KEY", "sk_live_abc")
+    monkeypatch.delenv("RECEIPTS_ALLOW_LIVE_BILLING", raising=False)
+    monkeypatch.setattr("dotenv.load_dotenv", lambda *a, **k: None)
+    with pytest.raises(SystemExit):
+        bachs._key()
