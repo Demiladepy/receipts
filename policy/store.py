@@ -38,5 +38,25 @@ def lookup(case_type: str, rules_dir: Path = RULES_DIR) -> dict:
                 "note": "No committed rule. If you cannot resolve this on the evidence, escalate."}
     rule = matches[-1]
     return {"found": True, **{k: rule[k] for k in ("rule_id", "case_type", "decision", "instructions",
-                                                    "customer_line", "decided_by", "source_case")
+                                                    "customer_line", "conditions", "decided_by",
+                                                    "source_case")
                               if k in rule}}
+
+
+def conditions_hold(conditions: list[dict], receipts: list[dict]) -> tuple[bool, str | None]:
+    """Check a rule's conditions against the latest successful read of each source.
+
+    A condition is {"op": "switch.get_status", "field": "status", "equals": "failed"}.
+    Returns (holds, why_not)."""
+    latest: dict[str, dict] = {}
+    for r in receipts:
+        if r.get("ok") and r.get("value") is not None:
+            latest[r["op"]] = r["value"]
+    for cond in conditions:
+        value = latest.get(cond["op"])
+        if value is None:
+            return False, f"no successful {cond['op']} read to check {cond['field']}"
+        if value.get(cond["field"]) != cond["equals"]:
+            return False, (f"{cond['op']} says {cond['field']}={value.get(cond['field'])!r}, "
+                           f"the rule needs {cond['equals']!r}")
+    return True, None
