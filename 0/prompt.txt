@@ -1,0 +1,7 @@
+<task-notification>
+<task-id>bxqwtorhh</task-id>
+<tool-use-id>toolu_01KQ8H5RU7FRirk6mjjGqSet</tool-use-id>
+<output-file>C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-receipts\88462877-3c46-4f71-be91-c0af4af70096\tasks\bxqwtorhh.output</output-file>
+<status>completed</status>
+<summary>Background command "Poll production until the new endpoint is live" completed (exit code 0)</summary>
+</task-notification>
