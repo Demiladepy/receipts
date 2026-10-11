@@ -15,6 +15,7 @@
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -186,7 +187,9 @@ def decide(escalation_id: str, decision: str, by: str, rule_id: str | None, dry_
     print(f"Claude Code is writing rule {rule_id} from {escalation_id} ...", flush=True)
     # The prompt goes on stdin: on Windows the claude.cmd shim cuts a multi-line
     # argument at its first newline.
-    result = subprocess.run(cmd, cwd=ROOT, input=prompt, text=True, encoding="utf-8")
+    # A broken third-party pytest plugin on some machines (opik) crashes collection.
+    env = {**os.environ, "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"}
+    result = subprocess.run(cmd, cwd=ROOT, input=prompt, text=True, encoding="utf-8", env=env)
     sys.exit(result.returncode)
 
 
