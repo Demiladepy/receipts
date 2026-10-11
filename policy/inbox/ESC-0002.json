@@ -1,0 +1,126 @@
+{
+  "escalation_id": "ESC-0002",
+  "complaint_id": "CMP-0002",
+  "case_type": "switch_success_no_credit",
+  "reason": "Switch shows success but beneficiary credit confirmed. This is a disagreement requiring human review.",
+  "narrative": "I am Chinedu Okeke. I sent NGN 15,000.00 to account 3100000002 at Lumen MFB. My account was debited but the beneficiary was not credited. Reference TXN-0002.",
+  "receipts": [
+    {
+      "receipt_id": "dfe051e6f1daabcd",
+      "seq": 1,
+      "op": "sender.get_debit",
+      "args": {
+        "transfer_id": "TXN-0002"
+      },
+      "ok": true,
+      "value": {
+        "transfer_id": "TXN-0002",
+        "account": "2100000002",
+        "bank": "Cedar Bank",
+        "amount_kobo": 1500000,
+        "currency": "NGN",
+        "debited": true,
+        "debit_at": "2026-10-10T03:58:00+01:00",
+        "reversal_applied": false,
+        "reversed_at": null,
+        "read_at": "2026-10-10T08:00:01+01:00"
+      },
+      "error": null
+    },
+    {
+      "receipt_id": "c71d65f6aec3aa33",
+      "seq": 2,
+      "op": "switch.get_status",
+      "args": {
+        "transfer_id": "TXN-0002"
+      },
+      "ok": false,
+      "value": null,
+      "error": "timeout"
+    },
+    {
+      "receipt_id": "b6d4a0bc7ae94d9c",
+      "seq": 3,
+      "op": "beneficiary.get_credit",
+      "args": {
+        "transfer_id": "TXN-0002"
+      },
+      "ok": true,
+      "value": {
+        "transfer_id": "TXN-0002",
+        "account": "3100000002",
+        "bank": "Lumen MFB",
+        "credited": true,
+        "amount_kobo": 1500000,
+        "currency": "NGN",
+        "credit_at": "2026-10-10T03:59:30+01:00",
+        "read_at": "2026-10-10T08:00:02+01:00"
+      },
+      "error": null
+    },
+    {
+      "receipt_id": "129434dc0a46cd92",
+      "seq": 4,
+      "op": "switch.get_status",
+      "args": {
+        "transfer_id": "TXN-0002"
+      },
+      "ok": true,
+      "value": {
+        "transfer_id": "TXN-0002",
+        "status": "success",
+        "amount_kobo": 1500000,
+        "currency": "NGN",
+        "updated_at": "2026-10-10T03:58:40+01:00",
+        "read_at": "2026-10-10T08:00:03+01:00"
+      },
+      "error": null
+    },
+    {
+      "receipt_id": "7cf5a40d3b320971",
+      "seq": 5,
+      "op": "policy.lookup",
+      "args": {
+        "case_type": "switch_success_no_credit"
+      },
+      "ok": true,
+      "value": {
+        "found": false,
+        "case_type": "switch_success_no_credit",
+        "note": "No committed rule. If you cannot resolve this on the evidence, escalate."
+      },
+      "error": null
+    }
+  ],
+  "seed": 2,
+  "trace_id": "9aaad966f3d49a681adb31eea6f34fde",
+  "amount": "NGN 15,000.00",
+  "pattern_seen": "switch_success_no_credit",
+  "statements": [
+    {
+      "receipt_id": "dfe051e6f1daabcd",
+      "source": "sender ledger (authoritative for the debit and reversal)",
+      "op": "sender.get_debit",
+      "says": "debited=True, reversal_applied=False"
+    },
+    {
+      "receipt_id": "b6d4a0bc7ae94d9c",
+      "source": "beneficiary bank (authoritative for whether the credit posted)",
+      "op": "beneficiary.get_credit",
+      "says": "credited=True at 2026-10-10T03:59:30+01:00"
+    },
+    {
+      "receipt_id": "129434dc0a46cd92",
+      "source": "payment switch (authoritative for the transfer instruction)",
+      "op": "switch.get_status",
+      "says": "status success"
+    }
+  ],
+  "customer_reply_sent": "Your account was debited with NGN 15,000.00 for the transfer TXN-0002. The transfer was successful according to our payment switch. The beneficiary account at Lumen MFB was credited with NGN 15,000.00. There is a discrepancy between the switch and beneficiary records, so we have escalated this case for human review. Please wait while our team investigates this issue further. We will update you as soon as possible.",
+  "options": [
+    "A. Every source agrees the credit posted: tell the customer it was credited, cite the beneficiary bank's receipt, ask them to check with the recipient. No reversal, no escalation.",
+    "B. As A, but escalate large amounts for a human double-check.",
+    "C. Keep escalating every disputed credit to a human."
+  ],
+  "asked_at": "2026-10-11T13:18:56+00:00"
+}

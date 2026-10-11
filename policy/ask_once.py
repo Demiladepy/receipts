@@ -40,20 +40,26 @@ def _scenario(seed: int):
     return next(s for s in load_scenarios() if s.seed == seed)
 
 
-def _run(seed: int, version: str = "v3") -> dict:
+def _run(seed: int, version: str = "v3", profile: str = "catalog") -> dict:
     from agent.llm_agent import run_case
     from agent.tracing import init_tracing
 
     init_tracing(tags=[f"prompt:{version}", "ask-once"])
-    record = run_case(_scenario(seed), version)
+    scenario = _scenario(seed)
+    chaos = None
+    if profile == "stress":
+        from sim.stress import stress_flags
+
+        chaos = stress_flags(scenario)
+    record = run_case(scenario, version, chaos=chaos)
     import neatlogs
 
     neatlogs.flush()
     return record
 
 
-def pack(seed: int) -> Path:
-    record = _run(seed)
+def pack(seed: int, profile: str = "catalog") -> Path:
+    record = _run(seed, profile=profile)
     esc = record.get("escalation")
     if not esc:
         print(f"seed {seed} did not escalate (status {record['status']}); nothing to ask.")
@@ -80,12 +86,7 @@ def pack(seed: int) -> Path:
         "pattern_seen": esc.get("case_type"),
         "statements": statements,
         "customer_reply_sent": record["message"],
-        "options": [
-            "A. Trust the beneficiary bank on whether the credit posted: tell the customer it was "
-            "credited, do not reverse, do not escalate.",
-            "B. Trust the switch: reverse the debit (risk: the customer is paid twice).",
-            "C. Keep escalating every case like this to a human.",
-        ],
+        "options": _options(reads),
         "asked_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
     }
     INBOX.mkdir(parents=True, exist_ok=True)
@@ -94,6 +95,27 @@ def pack(seed: int) -> Path:
     _print_pack(evidence)
     print(f"\nsaved {path.relative_to(ROOT)}")
     return path
+
+
+def _options(reads: list[dict]) -> list[str]:
+    latest = {r["op"]: r["value"] for r in reads}
+    switch = (latest.get("switch.get_status") or {}).get("status")
+    credited = (latest.get("beneficiary.get_credit") or {}).get("credited")
+    if switch == "success" and credited:
+        return [
+            "A. Every source agrees the credit posted: tell the customer it was credited, cite the "
+            "beneficiary bank's receipt, ask them to check with the recipient. No reversal, no escalation.",
+            "B. As A, but escalate large amounts for a human double-check.",
+            "C. Keep escalating every disputed credit to a human.",
+        ]
+    if switch == "failed" and credited:
+        return [
+            "A. Trust the beneficiary bank on whether the credit posted: tell the customer it was "
+            "credited, do not reverse, do not escalate.",
+            "B. Trust the switch: reverse the debit (risk: the customer is paid twice).",
+            "C. Keep escalating every case like this to a human.",
+        ]
+    return ["A. Describe the decision in your own words.", "C. Keep escalating cases like this to a human."]
 
 
 def _print_pack(e: dict) -> None:
@@ -166,14 +188,15 @@ def decide(escalation_id: str, decision: str, by: str, rule_id: str | None, dry_
     sys.exit(result.returncode)
 
 
-def replay(seed: int) -> None:
-    record = _run(seed)
+def replay(seed: int, profile: str = "catalog") -> dict:
+    record = _run(seed, profile=profile)
     policy = [c for c in record["claims_sent"] if c["assertion"] == "policy"]
     print(f"seed {seed}: status {record['status']}, resolved_correctly "
           f"{record['audit']['resolved_correctly']}, escalated {bool(record['escalation'])}")
     print(f"trace {record['trace_id']}")
     print(f"cited rule: {policy[0]['value'] if policy else 'none'}")
     print(f"reply: {record['message']}")
+    return record
 
 
 def main() -> None:
@@ -181,6 +204,7 @@ def main() -> None:
     sub = parser.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("pack")
     p.add_argument("--seed", type=int, required=True)
+    p.add_argument("--profile", choices=["catalog", "stress"], default="catalog")
     d = sub.add_parser("decide")
     d.add_argument("escalation_id")
     d.add_argument("--decision", required=True)
@@ -189,13 +213,14 @@ def main() -> None:
     d.add_argument("--dry-run", action="store_true")
     r = sub.add_parser("replay")
     r.add_argument("--seed", type=int, required=True)
+    r.add_argument("--profile", choices=["catalog", "stress"], default="catalog")
     args = parser.parse_args()
     if args.cmd == "pack":
-        pack(args.seed)
+        pack(args.seed, args.profile)
     elif args.cmd == "decide":
         decide(args.escalation_id, args.decision, args.by, args.rule_id, args.dry_run)
     else:
-        replay(args.seed)
+        replay(args.seed, args.profile)
 
 
 if __name__ == "__main__":

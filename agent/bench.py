@@ -87,6 +87,18 @@ def load(path: Path) -> list[dict]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
+def needs_human(r: dict) -> bool:
+    """A person is genuinely needed: the case type requires one, a reversal did not post,
+    or a source never answered."""
+    a = r["audit"]
+    if a["expected"] == "escalate":
+        return True
+    if a["expected"] == "reverse" and a.get("debit_left_open"):
+        return True
+    answered = {x["op"] for x in r.get("receipts", []) if x["ok"]}
+    return not {"sender.get_debit", "switch.get_status", "beneficiary.get_credit"} <= answered
+
+
 def metrics(records: list[dict]) -> dict:
     done = [r for r in records if r.get("status") != "crashed"]
     n = len(records)
@@ -103,6 +115,8 @@ def metrics(records: list[dict]) -> dict:
         "reversals_on_unconfirmed_evidence": sum(bool(r["audit"].get("unconfirmed_reversal")) for r in done),
         "debits_left_open_silently": sum(
             r["audit"]["debit_left_open"] and not r.get("escalation") for r in done),
+        "escalated_to_human": sum(bool(r.get("escalation")) for r in done),
+        "unnecessary_escalations": sum(bool(r.get("escalation")) and not needs_human(r) for r in done),
         "replies_blocked_then_fixed": sum(r["blocks"] > 0 and r["status"] == "sent" for r in done),
         "tool_calls_avg": round(sum(len(r["tool_order"]) for r in done) / max(len(done), 1), 1),
         "cost_usd_total": round(cost, 4),

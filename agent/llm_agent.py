@@ -153,7 +153,8 @@ class Case:
         if op == "sender.reverse":
             return w.reverse(args.get("transfer_id"))
         if op == "policy.lookup":
-            return store.lookup(str(args.get("case_type", "unknown")))
+            return store.lookup(str(args.get("case_type", "unknown")),
+                                receipts=[r.as_json() for r in self.book.receipts])
         if op == "case.escalate":
             self.escalation = self._evidence_pack(args)
             return {"escalation_id": self.escalation["escalation_id"], "status": "queued"}

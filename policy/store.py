@@ -31,8 +31,17 @@ def load_rules(rules_dir: Path = RULES_DIR) -> list[dict]:
     return rules
 
 
-def lookup(case_type: str, rules_dir: Path = RULES_DIR) -> dict:
-    matches = [r for r in load_rules(rules_dir) if r.get("case_type") == case_type]
+def lookup(case_type: str, rules_dir: Path = RULES_DIR, receipts: list[dict] | None = None) -> dict:
+    """Find the committed rule for this case.
+
+    With receipts, a rule applies when its conditions hold on the latest reads, whatever
+    the model called the case; the model's case_type is only a fallback. Without
+    receipts (tests, the CLI), match by case_type."""
+    rules = load_rules(rules_dir)
+    if receipts is not None:
+        matches = [r for r in rules if r.get("conditions") and conditions_hold(r["conditions"], receipts)[0]]
+    else:
+        matches = [r for r in rules if r.get("case_type") == case_type]
     if not matches:
         return {"found": False, "case_type": case_type,
                 "note": "No committed rule. If you cannot resolve this on the evidence, escalate."}
