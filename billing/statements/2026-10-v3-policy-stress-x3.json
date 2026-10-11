@@ -1,0 +1,671 @@
+{
+  "customer": "Harbor Bank (simulated)",
+  "period": "2026-10",
+  "source": "runs\\v3-policy-stress-x3.jsonl",
+  "currency": "NGN",
+  "price_per_resolution_kobo": 200000,
+  "price_note": "planning assumption",
+  "proved_resolutions": 51,
+  "escalated_free": 39,
+  "not_billed": 0,
+  "total_kobo": 10200000,
+  "generated_at": "2026-10-11T14:37:45+00:00",
+  "lines": [
+    {
+      "complaint_id": "CMP-0002",
+      "seed": 2,
+      "rep": 1,
+      "neatlogs_trace_id": "1e0c57ed2c1da604b197649fd7ba47b3",
+      "prompt_version": "v3",
+      "policy_rule": "agreed-credit-v1",
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0003",
+      "seed": 3,
+      "rep": 1,
+      "neatlogs_trace_id": "fbad4bc89c02896ffad9e786461f92dd",
+      "prompt_version": "v3",
+      "policy_rule": "agreed-credit-v1",
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0004",
+      "seed": 4,
+      "rep": 1,
+      "neatlogs_trace_id": "fdafceaf73745b4a424a0e26c71bbd90",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0005",
+      "seed": 5,
+      "rep": 1,
+      "neatlogs_trace_id": "7f1bf8465ba3e12e9e46c284685def6f",
+      "prompt_version": "v3",
+      "policy_rule": "agreed-credit-v1",
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0006",
+      "seed": 6,
+      "rep": 1,
+      "neatlogs_trace_id": "6935c271d8324d8913d08f82b4ddc352",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0007",
+      "seed": 7,
+      "rep": 1,
+      "neatlogs_trace_id": "bfd59a101ffb494fa052b7464b74276e",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0008",
+      "seed": 8,
+      "rep": 1,
+      "neatlogs_trace_id": "ae48024cb0d293ac9a1c588b1e62a6ad",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0009",
+      "seed": 9,
+      "rep": 1,
+      "neatlogs_trace_id": "cf93113a27bcf18b240aebee51badb4e",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0011",
+      "seed": 11,
+      "rep": 1,
+      "neatlogs_trace_id": "015507fd24979ff2946fd636e1ab1b30",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0012",
+      "seed": 12,
+      "rep": 1,
+      "neatlogs_trace_id": "f4696632a420923138bb1015ca6fd373",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0013",
+      "seed": 13,
+      "rep": 1,
+      "neatlogs_trace_id": "0b99ee69f0b7f92d0f38152ffcb802d9",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0015",
+      "seed": 15,
+      "rep": 1,
+      "neatlogs_trace_id": "48ed80f5c20500ffe144a2e34d8d7c4d",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0016",
+      "seed": 16,
+      "rep": 1,
+      "neatlogs_trace_id": "1228e79d7c844c8edcd5f376f66892fb",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0017",
+      "seed": 17,
+      "rep": 1,
+      "neatlogs_trace_id": "cf4deb50e071d092a442c44004e94036",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0021",
+      "seed": 21,
+      "rep": 1,
+      "neatlogs_trace_id": "6a655ca5a0797a4850c6221afcf4385d",
+      "prompt_version": "v3",
+      "policy_rule": "switch-failed-but-credited-v1",
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0022",
+      "seed": 22,
+      "rep": 1,
+      "neatlogs_trace_id": "594606493cb44bd22e1c15c0684ad541",
+      "prompt_version": "v3",
+      "policy_rule": "switch-failed-but-credited-v1",
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0023",
+      "seed": 23,
+      "rep": 1,
+      "neatlogs_trace_id": "3f881a5336836449218a3b399c082639",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0001",
+      "seed": 1,
+      "rep": 2,
+      "neatlogs_trace_id": "177d66a21e958287ac419a51f30ae4e1",
+      "prompt_version": "v3",
+      "policy_rule": "agreed-credit-v1",
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0002",
+      "seed": 2,
+      "rep": 2,
+      "neatlogs_trace_id": "8415b22e587b42a3741c736114766809",
+      "prompt_version": "v3",
+      "policy_rule": "agreed-credit-v1",
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0003",
+      "seed": 3,
+      "rep": 2,
+      "neatlogs_trace_id": "98459e6ac34a76461c1326f46ad63c01",
+      "prompt_version": "v3",
+      "policy_rule": "agreed-credit-v1",
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0004",
+      "seed": 4,
+      "rep": 2,
+      "neatlogs_trace_id": "0ffae91fd1f9f0089bca0a53d1df98fc",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0005",
+      "seed": 5,
+      "rep": 2,
+      "neatlogs_trace_id": "d4f1bad4048f674ce7913242e96a5d3f",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0006",
+      "seed": 6,
+      "rep": 2,
+      "neatlogs_trace_id": "2b44746f3e556cfcf76aff42a2024cd9",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0007",
+      "seed": 7,
+      "rep": 2,
+      "neatlogs_trace_id": "a275ae1dd302d24f44a29ce33d9e6371",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0008",
+      "seed": 8,
+      "rep": 2,
+      "neatlogs_trace_id": "ea1973f4567b8718feee35f2bff09d81",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0009",
+      "seed": 9,
+      "rep": 2,
+      "neatlogs_trace_id": "8de29f1ed72890c94a23ff1af2a346c1",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0011",
+      "seed": 11,
+      "rep": 2,
+      "neatlogs_trace_id": "2e900e602175990ac55278fcefa55b5b",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0012",
+      "seed": 12,
+      "rep": 2,
+      "neatlogs_trace_id": "1de7c53e11987240f1ee3ffeb35f5e89",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0013",
+      "seed": 13,
+      "rep": 2,
+      "neatlogs_trace_id": "af879e5f90c3361e0e5c7c923fbf2595",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0015",
+      "seed": 15,
+      "rep": 2,
+      "neatlogs_trace_id": "02ae10359e927be32ca7b0adfc3e87db",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0016",
+      "seed": 16,
+      "rep": 2,
+      "neatlogs_trace_id": "81054edad9edb79c6f37031ad92d97f7",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0021",
+      "seed": 21,
+      "rep": 2,
+      "neatlogs_trace_id": "7ce95ff98327ee603ee636d41b50a19b",
+      "prompt_version": "v3",
+      "policy_rule": "switch-failed-but-credited-v1",
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0022",
+      "seed": 22,
+      "rep": 2,
+      "neatlogs_trace_id": "8cba081473e7c9a6ca388ac85d6ab281",
+      "prompt_version": "v3",
+      "policy_rule": "switch-failed-but-credited-v1",
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0023",
+      "seed": 23,
+      "rep": 2,
+      "neatlogs_trace_id": "1dc7f77e7be45345e6fb9168404e953e",
+      "prompt_version": "v3",
+      "policy_rule": "agreed-credit-v1",
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0001",
+      "seed": 1,
+      "rep": 3,
+      "neatlogs_trace_id": "1b8801b57f2e1d4d721cd9802e0939b7",
+      "prompt_version": "v3",
+      "policy_rule": "agreed-credit-v1",
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0002",
+      "seed": 2,
+      "rep": 3,
+      "neatlogs_trace_id": "1ef6b3750cabcd1987baf6208483a664",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0003",
+      "seed": 3,
+      "rep": 3,
+      "neatlogs_trace_id": "a12e36513e22e6380af1cac06708ddf1",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0004",
+      "seed": 4,
+      "rep": 3,
+      "neatlogs_trace_id": "3be07d0f5fc4d594ab09467ffeeab19c",
+      "prompt_version": "v3",
+      "policy_rule": "agreed-credit-v1",
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0005",
+      "seed": 5,
+      "rep": 3,
+      "neatlogs_trace_id": "9a8bd08219310593dd97e28e0b03dd9b",
+      "prompt_version": "v3",
+      "policy_rule": "agreed-credit-v1",
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0006",
+      "seed": 6,
+      "rep": 3,
+      "neatlogs_trace_id": "ff3c45bc62ceb7f8668db8d37ad135dd",
+      "prompt_version": "v3",
+      "policy_rule": "agreed-credit-v1",
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0007",
+      "seed": 7,
+      "rep": 3,
+      "neatlogs_trace_id": "b745c4fba0d217045fbbac8ecd9c1de4",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0008",
+      "seed": 8,
+      "rep": 3,
+      "neatlogs_trace_id": "42ba5a73b1dcf64f3cfd0d86e3d963bf",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0009",
+      "seed": 9,
+      "rep": 3,
+      "neatlogs_trace_id": "44ff8e5857d6866d75acc6d0cccaa9bf",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0011",
+      "seed": 11,
+      "rep": 3,
+      "neatlogs_trace_id": "cb03a612201bcf9548f09393a65c72bd",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0012",
+      "seed": 12,
+      "rep": 3,
+      "neatlogs_trace_id": "5be20056d1cc4fa4a7520f491c087522",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0015",
+      "seed": 15,
+      "rep": 3,
+      "neatlogs_trace_id": "50580b9cfcf5f9d686804d3f92a87dab",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0016",
+      "seed": 16,
+      "rep": 3,
+      "neatlogs_trace_id": "4fe104b956564fe5a3a64a88c912a726",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0017",
+      "seed": 17,
+      "rep": 3,
+      "neatlogs_trace_id": "e2a1df7449d46895848ffb8d3190e087",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0021",
+      "seed": 21,
+      "rep": 3,
+      "neatlogs_trace_id": "c1c09d4cd96079c252e2f16a23496a95",
+      "prompt_version": "v3",
+      "policy_rule": "switch-failed-but-credited-v1",
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0022",
+      "seed": 22,
+      "rep": 3,
+      "neatlogs_trace_id": "7615868468772142ee0ac2cf89ab31f6",
+      "prompt_version": "v3",
+      "policy_rule": "switch-failed-but-credited-v1",
+      "amount_kobo": 200000
+    },
+    {
+      "complaint_id": "CMP-0023",
+      "seed": 23,
+      "rep": 3,
+      "neatlogs_trace_id": "298dc0f6ab82f4a571331f119bab30a3",
+      "prompt_version": "v3",
+      "policy_rule": null,
+      "amount_kobo": 200000
+    }
+  ],
+  "escalations": [
+    {
+      "complaint_id": "CMP-0001",
+      "neatlogs_trace_id": "cb9ec78becca9800db1419f6acaae919",
+      "escalation_id": "ESC-0001"
+    },
+    {
+      "complaint_id": "CMP-0010",
+      "neatlogs_trace_id": "09fa8596c1a81d7b7c1d9e99a59337bc",
+      "escalation_id": "ESC-0010"
+    },
+    {
+      "complaint_id": "CMP-0014",
+      "neatlogs_trace_id": "8afc5e43f466dd11afb4efbe95616e42",
+      "escalation_id": "ESC-0014"
+    },
+    {
+      "complaint_id": "CMP-0018",
+      "neatlogs_trace_id": "580a87dbe6ab44ed9d1477f646c7cc8c",
+      "escalation_id": "ESC-0018"
+    },
+    {
+      "complaint_id": "CMP-0019",
+      "neatlogs_trace_id": "a61e0d7bc3460010d148036fa2571e48",
+      "escalation_id": "ESC-0019"
+    },
+    {
+      "complaint_id": "CMP-0020",
+      "neatlogs_trace_id": "99423443b20a739ef7f6dc22497cba4d",
+      "escalation_id": "ESC-0020"
+    },
+    {
+      "complaint_id": "CMP-0024",
+      "neatlogs_trace_id": "56a81c9b1ae857a12412102f4716e829",
+      "escalation_id": "ESC-0024"
+    },
+    {
+      "complaint_id": "CMP-0025",
+      "neatlogs_trace_id": "f4507cadc3c507421c889258aabe6c14",
+      "escalation_id": "ESC-0025"
+    },
+    {
+      "complaint_id": "CMP-0026",
+      "neatlogs_trace_id": "10a85a6e0ecd8ea8ac6cdae439fef94e",
+      "escalation_id": "ESC-0026"
+    },
+    {
+      "complaint_id": "CMP-0027",
+      "neatlogs_trace_id": "3b421eb07a6148eef8f8ed7372bb3587",
+      "escalation_id": "ESC-0027"
+    },
+    {
+      "complaint_id": "CMP-0028",
+      "neatlogs_trace_id": "85b4359c517636f0b67e19de6582532c",
+      "escalation_id": "ESC-0028"
+    },
+    {
+      "complaint_id": "CMP-0029",
+      "neatlogs_trace_id": "0bf45416da6c0609a89e1ee34eb18413",
+      "escalation_id": "ESC-0029"
+    },
+    {
+      "complaint_id": "CMP-0030",
+      "neatlogs_trace_id": "0a990d1d6e086022ffeb38e743622ae0",
+      "escalation_id": "ESC-0030"
+    },
+    {
+      "complaint_id": "CMP-0010",
+      "neatlogs_trace_id": "58ffd96d659666f650216abae1a816a5",
+      "escalation_id": "ESC-0010"
+    },
+    {
+      "complaint_id": "CMP-0014",
+      "neatlogs_trace_id": "663f7ecd0e68a879b520a3acb4224731",
+      "escalation_id": "ESC-0014"
+    },
+    {
+      "complaint_id": "CMP-0017",
+      "neatlogs_trace_id": "4d49d8bd83317dcf4b9720586cfa6166",
+      "escalation_id": "ESC-0017"
+    },
+    {
+      "complaint_id": "CMP-0018",
+      "neatlogs_trace_id": "88e968643f2a085a332a43197a9bd287",
+      "escalation_id": "ESC-0018"
+    },
+    {
+      "complaint_id": "CMP-0019",
+      "neatlogs_trace_id": "cdf507909381fce27058421d98194e0e",
+      "escalation_id": "ESC-0019"
+    },
+    {
+      "complaint_id": "CMP-0020",
+      "neatlogs_trace_id": "7ee691971651fc9c5ce9f3b6c00fc2a4",
+      "escalation_id": "ESC-0020"
+    },
+    {
+      "complaint_id": "CMP-0024",
+      "neatlogs_trace_id": "d4222911e6150f4ff1679ecbbcd8a110",
+      "escalation_id": "ESC-0024"
+    },
+    {
+      "complaint_id": "CMP-0025",
+      "neatlogs_trace_id": "4f167d93cd317343abd3bfb9dc6ce970",
+      "escalation_id": "ESC-0025"
+    },
+    {
+      "complaint_id": "CMP-0026",
+      "neatlogs_trace_id": "8e0a8fb6ca0ed3c87878db1ca8ef05d9",
+      "escalation_id": "ESC-0026"
+    },
+    {
+      "complaint_id": "CMP-0027",
+      "neatlogs_trace_id": "5ec38f48552c07d722783bfe2544e655",
+      "escalation_id": "ESC-0027"
+    },
+    {
+      "complaint_id": "CMP-0028",
+      "neatlogs_trace_id": "f5bbb348b56ed29f1bc481376176abdc",
+      "escalation_id": "ESC-0028"
+    },
+    {
+      "complaint_id": "CMP-0029",
+      "neatlogs_trace_id": "8e8cdd22b6de74db1e20a922138a8bde",
+      "escalation_id": "ESC-0029"
+    },
+    {
+      "complaint_id": "CMP-0030",
+      "neatlogs_trace_id": "e8e3954b9da5d407c37838b85a82eab4",
+      "escalation_id": "ESC-0030"
+    },
+    {
+      "complaint_id": "CMP-0010",
+      "neatlogs_trace_id": "03497b0756ad16ac53e67ca620a2fbdd",
+      "escalation_id": "ESC-0010"
+    },
+    {
+      "complaint_id": "CMP-0013",
+      "neatlogs_trace_id": "4919080983039233ee84ce8d525a4681",
+      "escalation_id": "ESC-0013"
+    },
+    {
+      "complaint_id": "CMP-0014",
+      "neatlogs_trace_id": "d46af81400c1aeed642e10197039e686",
+      "escalation_id": "ESC-0014"
+    },
+    {
+      "complaint_id": "CMP-0018",
+      "neatlogs_trace_id": "bd8e3c5074be67e4491a8dcfce495fc1",
+      "escalation_id": "ESC-0018"
+    },
+    {
+      "complaint_id": "CMP-0019",
+      "neatlogs_trace_id": "30dc57ab797a66bf0c7381c869a6cfea",
+      "escalation_id": "ESC-0019"
+    },
+    {
+      "complaint_id": "CMP-0020",
+      "neatlogs_trace_id": "34425fd9f43da00de685571f64ca0884",
+      "escalation_id": "ESC-0020"
+    },
+    {
+      "complaint_id": "CMP-0024",
+      "neatlogs_trace_id": "bc740827594f13bcf4f958cbe98288d1",
+      "escalation_id": "ESC-0024"
+    },
+    {
+      "complaint_id": "CMP-0025",
+      "neatlogs_trace_id": "5dd6b4659c7b8cfb3ecd81ffe66e8dfd",
+      "escalation_id": "ESC-0025"
+    },
+    {
+      "complaint_id": "CMP-0026",
+      "neatlogs_trace_id": "bae11d6445b75fb57f3068ebb38be5ec",
+      "escalation_id": "ESC-0026"
+    },
+    {
+      "complaint_id": "CMP-0027",
+      "neatlogs_trace_id": "226d529a7b16706b95a6d45f1f53b18b",
+      "escalation_id": "ESC-0027"
+    },
+    {
+      "complaint_id": "CMP-0028",
+      "neatlogs_trace_id": "17e0e7ca7eb7bf424c71ece0448dd61d",
+      "escalation_id": "ESC-0028"
+    },
+    {
+      "complaint_id": "CMP-0029",
+      "neatlogs_trace_id": "b678d9143762cc62ab36ea9615a91e23",
+      "escalation_id": "ESC-0029"
+    },
+    {
+      "complaint_id": "CMP-0030",
+      "neatlogs_trace_id": "fee3dd23c466ac7115c27eb67e39c3c1",
+      "escalation_id": "ESC-0030"
+    }
+  ]
+}

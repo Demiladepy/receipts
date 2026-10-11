@@ -1,38 +1,46 @@
 # cfo.ai inputs: measured, not assumed
 
-Give this to Ari in the Receipts plan. Every number here comes from `runs/v3-stress-x3.jsonl` (90 runs of v3 on the 30 stress seeds, gpt-4.1-mini at list price $0.40 / $1.60 per 1M tokens), unless it is marked as an assumption.
+Every number marked **measured** comes from the run files in `runs/` (90 runs per version on the 30 stress seeds, gpt-4.1-mini at OpenAI list price, $0.40 / $1.60 per 1M tokens). Everything else is marked as an assumption.
 
-## Per case, measured
+## Per case (measured)
 
-| Input | Value | Source |
-|---|---|---|
-| Model cost per case, mean | **$0.0047** | token usage on 90 runs |
-| Model cost per case, median / worst | $0.0049 / $0.0139 | same |
-| Model cost by case type | no action $0.0040 · reversal $0.0062 · escalation $0.0045 | same |
-| Tokens per case | ~9,900 in, ~470 out, 5.5 model calls | same |
-| Escalated to a human, today | **66%** of cases (59 / 90) | `escalated_to_human` |
-| Of those, not actually needed | 14 / 90 runs | `unnecessary_escalations` |
-| False claims sent / harmful reversals | 0 / 0 | ground-truth audit |
+| Input | Before ask-once (v3) | After 2 decisions (v3 + rules) | Source |
+|---|---|---|---|
+| Model cost per case, mean | $0.0047 | **$0.0045** | `runs/v3-stress-x3.jsonl`, `runs/v3-policy-stress-x3.jsonl` |
+| Escalated to a human | 66% (59 / 90) | **43% (39 / 90)** | `escalated_to_human` |
+| Unnecessary escalations | 14 / 90 | **2 / 90** | `unnecessary_escalations` |
+| Proved resolutions (billable) | 31 / 90 | **51 / 90** | billing rule: verifier allowed, no human |
+| False claims sent / harmful reversals | 0 / 0 | 0 / 0 | ground-truth audit |
+| Tokens per case | ~9,900 in, ~470 out, 5.5 model calls | similar | token usage |
 
-## What drives margin: human escalations, not tokens
+Floor for escalations: about 30% of cases genuinely need a person in this mix (over the limit, a reversal that did not post, a source that never answers). Each ask-once decision moves the rate toward that floor. The next one, large agreed credits (seed 23), is already identified.
 
-At $0.0047 a case, model cost is a rounding error next to a human reviewer. The lever is the escalation rate, and ask-once is how it falls: each committed decision removes a whole case type from the human queue. Model the escalation rate as a schedule:
+## Billing (how the money is collected)
 
-| Stage | Escalation rate | Note |
-|---|---|---|
-| Today (no committed policy) | 66% | measured |
-| After decisions 1 and 2 (switch-failed-but-credited, agreed credit) | measure after `replay` | fill in from the rerun |
-| Floor | ~30% | cases that genuinely need a person: over-limit, reversal not posted, a source that never answers |
+- **Unit:** one proved resolution. A bank pays only when the verifier allowed the reply and no human was needed; escalations are free and listed on the statement, so the bank sees its own human queue.
+- **Statement:** `python -m billing statement` lists every billable case with its neatlogs trace id. Example from the 90 policy runs: 51 × NGN 2,000.00 = **NGN 102,000.00**, 39 escalations free (`billing/statements/2026-10-v3-policy-stress-x3.json`).
+- **Provider:** Paystack Payment Requests (invoices in NGN). Dodo Payments was the first choice and is integrated, but it could not onboard a Nigerian business. The same "not available in your country" wall is one Nigerian customers hit every day, so the billing layer is provider-independent.
+- **Payment fee (assumption from published third-party guides; confirm on paystack.com/pricing):** local card 1.5% + NGN 100, capped at NGN 2,000 per payment. On a monthly invoice of NGN 102,000 that is about NGN 1,630.
 
-## Assumptions to set in the model (mark them as such)
+## Assumptions to set in the model (label them as assumptions)
 
-- Price per resolved complaint (proposal: charge only for replies that pass the verifier, since that is the product).
+- Price per proved resolution: NGN 2,000 (planning figure).
+- USD/NGN rate for the model and tooling costs, which are in USD.
 - Human reviewer cost per escalated case (minutes × loaded hourly cost).
 - Complaints per bank per month, banks onboarded per month, churn.
 - Platform cost (hosting, neatlogs plan).
 
-## Questions for Ari
+## Paste this into Ari
 
-1. At the measured cost, what price per resolved complaint keeps gross margin above 80% in the downside case where escalations stay at 66%?
-2. How many months of runway does each 10-point drop in escalation rate buy?
-3. Which is the better pricing unit for a bank: per resolved complaint, or per complaint received?
+> I'm planning Receipts, an AI agent that resolves "debited but not credited" bank-transfer complaints for Nigerian banks. It can only send a customer reply when every claim is proved by a trace of the tool call behind it, and it hands the case to a human otherwise.
+>
+> Measured from 90 test runs: model cost per case is $0.0045. 43% of cases still go to a human after two policy decisions (66% before them), and the floor is about 30%. There were 0 false claims sent and 0 harmful reversals.
+>
+> Pricing: the bank pays NGN 2,000 per proved resolution (assumption). Escalations are free. Invoices go out monthly through Paystack at 1.5% + NGN 100 per payment, capped at NGN 2,000 (assumption, from published rates).
+>
+> Please build a monthly model with Base, Downside and Upside scenarios from October 2026 to December 2027, with my assumptions marked: complaints per bank per month, banks added per month, churn, human reviewer cost per escalated case, platform cost, USD/NGN rate.
+>
+> Questions:
+> 1. Which price per proved resolution keeps gross margin above 80% in the Downside, where escalations stay at 66% and the bank's human cost is ours?
+> 2. How many months of runway does each 10-point drop in escalation rate buy?
+> 3. Is "per proved resolution" or "per complaint received" the better pricing unit for a bank, and why?

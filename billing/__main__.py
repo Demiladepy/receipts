@@ -1,13 +1,20 @@
-"""Dodo Payments setup and billing for Receipts (test mode by default).
+"""Billing for Receipts: a bank pays per proved resolution.
 
-    python -m billing setup                      # meters, product, test customer + subscription link
-    python -m billing preview runs/v3-stress-x3.jsonl
-    python -m billing send runs/v3-stress-x3.jsonl
+Provider-independent statement, then an invoice on whichever provider can serve the
+business. Dodo Payments was the first choice; it could not onboard a Nigerian
+business, so invoices go through Paystack. The Dodo adapter stays for where it can.
+
+    python -m billing statement runs/v3-policy-stress-x3.jsonl --period 2026-10
+    python -m billing invoice billing/statements/2026-10-v3-policy-stress-x3.json --email ... --name ...
+    python -m billing preview runs/v3-stress-x3.jsonl runs/v3-policy-stress-x3.jsonl
+
+    python -m billing setup | send <runs.jsonl>      # Dodo Payments usage metering (test mode)
 """
 
 import argparse
 import json
 import os
+from datetime import datetime, timezone
 from pathlib import Path
 
 from billing.dodo import (CONFIG_PATH, ESCALATION_EVENT, RESOLUTION_EVENT, bill, billable_event,
@@ -101,7 +108,34 @@ def main() -> None:
     p.add_argument("paths", nargs="+", type=Path)
     s = sub.add_parser("send")
     s.add_argument("path", type=Path)
+    st = sub.add_parser("statement")
+    st.add_argument("path", type=Path)
+    st.add_argument("--period", default=datetime.now(timezone.utc).strftime("%Y-%m"))
+    st.add_argument("--customer", default="Harbor Bank (simulated)")
+    inv = sub.add_parser("invoice")
+    inv.add_argument("statement", type=Path)
+    inv.add_argument("--provider", choices=["paystack"], default="paystack")
+    inv.add_argument("--email", default="disputes@harborbank.test")
+    inv.add_argument("--name", default="Harbor Bank")
     args = parser.parse_args()
+    if args.cmd == "statement":
+        from billing.statement import build, naira, save
+
+        stmt = build(_load(args.path), customer=args.customer, period=args.period, source=str(args.path))
+        path = save(stmt)
+        print(f"{stmt['customer']}, {stmt['period']}: {stmt['proved_resolutions']} proved resolutions x "
+              f"{naira(stmt['price_per_resolution_kobo'])} = {naira(stmt['total_kobo'])} "
+              f"({stmt['escalated_free']} escalations free, {stmt['not_billed']} not billed)")
+        print(f"wrote {path.relative_to(Path.cwd()) if path.is_relative_to(Path.cwd()) else path}")
+        return
+    if args.cmd == "invoice":
+        from billing import paystack
+
+        stmt = json.loads(args.statement.read_text(encoding="utf-8"))
+        result = paystack.invoice(stmt, email=args.email, name=args.name)
+        print(f"Paystack draft payment request {result['request_code']} ({result['status']}) "
+              f"for {result['amount']} kobo, customer {result['customer_code']}")
+        return
     if args.cmd == "setup":
         setup()
     elif args.cmd == "preview":

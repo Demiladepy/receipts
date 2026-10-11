@@ -103,7 +103,9 @@ The 2 misses are seed 23 (NGN 1,500,000.00, every source agrees it was credited)
 
 **Rules can lose their license** (`policy/license.py`). The audit acts as the detection: a run that cites a rule and sends a false claim or makes a harmful move revokes the rule (append-only `policy/licenses.jsonl`, with the trace id); lookup stops applying it and tells the agent to escalate; only a person restores it. After the 90 policy runs: both rules active, no detections.
 
-**Billing on Dodo Payments** (`billing/`). A bank pays per proved resolution: a usage event goes to Dodo only when the verifier allowed the reply and no human stepped in. Escalations are metered as a separate, free event. Billing never reads the simulator's truth. Each event id is derived from the neatlogs trace id, so re-sending never double-bills, and the event metadata carries the trace id, prompt version and policy rule: every invoice line has a receipt. At a planning price of $2 per proved resolution, the two decisions take 90 runs from $62 to $102 billed. Live test-mode setup needs `DODO_PAYMENTS_API_KEY`.
+**Billing: a bank pays per proved resolution** (`billing/`). A case is billable only when the verifier allowed the reply and no human stepped in; escalations are free and listed on the statement. Billing never reads the simulator's truth. `python -m billing statement` writes a usage statement with one line per proved resolution, each naming its complaint and neatlogs trace, so a bank can audit any charge by opening its trace. From the 90 policy runs: 51 × NGN 2,000.00 = NGN 102,000.00, 39 escalations free (`billing/statements/2026-10-v3-policy-stress-x3.json`).
+
+Dodo Payments was the first choice and the usage-metering adapter is built and tested (`billing/dodo.py`: idempotent events keyed by trace id). Dodo could not onboard a Nigerian business. That is the same "not available in your country" wall the customers in these complaints live with, so the billing layer does not depend on one provider: `billing/paystack.py` turns the same statement into a Paystack Payment Request (an NGN invoice, draft, notifications off, one line item per proved resolution). Both adapters are tested against fake transports; a live test-mode invoice needs `PAYSTACK_SECRET_KEY=sk_test_...`.
 
 **Prompt versions in neatlogs.** v1, v2 and v3 are versions 1 to 3 of the managed prompt `receipts-agent`, each with a commit message carrying its numbers; the `production` label moved v1 → v2 → v3. `python -m agent.bench run --version production` asks neatlogs which version the label points at and runs it.
 
@@ -112,7 +114,7 @@ The 2 misses are seed 23 (NGN 1,500,000.00, every source agrees it was credited)
 ### Planned, not done
 
 - neatlogs detections on the v1 runs (the MCP server is installed; create them from a new Claude Code session or the dashboard)
-- Dodo Payments test-mode setup and a real `billing send` (needs a test API key)
+- A live Paystack test-mode invoice (needs `PAYSTACK_SECRET_KEY=sk_test_...`)
 - cfo.ai: feed `evidence/cfo-inputs.md` to Ari; model escalation rate 66% → 43% as the ask-once lever
 - Ask once about large agreed credits (seed 23)
 - Demo video; posts 2 to 4
