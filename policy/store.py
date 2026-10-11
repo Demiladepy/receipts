@@ -37,11 +37,20 @@ def lookup(case_type: str, rules_dir: Path = RULES_DIR, receipts: list[dict] | N
     With receipts, a rule applies when its conditions hold on the latest reads, whatever
     the model called the case; the model's case_type is only a fallback. Without
     receipts (tests, the CLI), match by case_type."""
+    from policy import license
+
     rules = load_rules(rules_dir)
     if receipts is not None:
         matches = [r for r in rules if r.get("conditions") and conditions_hold(r["conditions"], receipts)[0]]
     else:
         matches = [r for r in rules if r.get("case_type") == case_type]
+    revoked = [r for r in matches if not license.is_active(r["rule_id"])]
+    matches = [r for r in matches if license.is_active(r["rule_id"])]
+    if revoked and not matches:
+        last = license.state(revoked[-1]["rule_id"])
+        return {"found": False, "case_type": case_type, "revoked_rule": revoked[-1]["rule_id"],
+                "note": f"Rule {revoked[-1]['rule_id']} has lost its license ({last.get('reason', '')}). "
+                        "Do not apply it. Escalate this case to a human."}
     if not matches:
         return {"found": False, "case_type": case_type,
                 "note": "No committed rule. If you cannot resolve this on the evidence, escalate."}
