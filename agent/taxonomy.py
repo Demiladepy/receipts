@@ -47,7 +47,8 @@ def classify(r: dict) -> list[str]:
         tags.append("reversed_over_limit")
     elif why:
         tags.append("reversed_unconfirmed")
-    if a["expected"] == "escalate" and not r.get("escalation") and "reversed_disagreement" not in tags:
+    if (a["expected"] == "escalate" and not r.get("escalation") and not a["resolved_correctly"]
+            and "reversed_disagreement" not in tags):
         tags.append("missed_escalation")
     if r["status"] == "withheld":
         tags.append("withheld")

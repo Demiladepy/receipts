@@ -150,6 +150,7 @@
         <a href="#numbers">Numbers</a>
         <a href="#rules">Rules</a>
         <a href="#taxonomy">What broke</a>
+        <a href="#askonce">Ask once</a>
         <a href="#plan">Plan</a>
         <a href="https://github.com/Demiladepy/receipts">Code</a>
         <a class="pill" href="#cases">Open a case</a>
@@ -203,6 +204,14 @@
       <div class="tax" id="tax"></div>
     </section>
 
+    <section id="askonce">
+      <p class="eyebrow">Ask once, then it is policy</p>
+      <h2>A decision becomes a rule. A rule can lose its license.</h2>
+      <p class="copy">v3 was safe but sent two thirds of cases to a human. A person decided two case types once; headless Claude Code wrote each decision as a rule plus a test and committed it, and Entire recorded the session. Rules apply when the case's receipts match their conditions, not when the model's label does. If a run that cites a rule sends a false claim or makes a harmful move, the audit revokes the rule and the case type goes back to a person.</p>
+      <div class="stats" id="policy-stats"></div>
+      <div class="grid3" id="rules" style="margin-top:16px"></div>
+    </section>
+
     <section id="plan">
       <p class="eyebrow">cfo.ai</p>
       <h2>What a proved reply costs.</h2>
@@ -213,7 +222,7 @@
   <footer>Simulated sender ledger, switch and beneficiary bank; amounts in NGN. Chaos is derived from the seed, so every run is reproducible. <a href="https://github.com/Demiladepy/receipts/blob/main/hackathon.md">Build log and evidence</a>.</footer>
 
   <script>
-    const NAMES = { v1: "v1 · no gate", v2: "v2 · reply gate", v3: "v3 · reply + action gate" };
+    const NAMES = { v1: "v1 · no gate", v2: "v2 · reply gate", v3: "v3 · reply + action gate", v3p: "v3 + 2 committed rules" };
     const state = { seed: 28, rep: 3, pair: ["v1", "v3"] };
     const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
     const fmt = (n) => Number(n).toLocaleString("en-US");
@@ -277,7 +286,7 @@
       reps.innerHTML = [1, 2, 3].map((r) => `<button type="button" data-rep="${r}" aria-pressed="${r === state.rep}">${r}</button>`).join("");
       reps.onclick = (e) => { const b = e.target.closest("button"); if (b) { state.rep = +b.dataset.rep; sync(); } };
       const pair = document.getElementById("pair");
-      const pairs = [["v1", "v3"], ["v1", "v2"], ["v2", "v3"]];
+      const pairs = [["v1", "v3"], ["v1", "v2"], ["v2", "v3"], ["v3", "v3p"]];
       pair.innerHTML = pairs.map((p) => `<button type="button" data-pair="${p.join(",")}" aria-pressed="${p.join() === state.pair.join()}">${p.join(" vs ")}</button>`).join("");
       pair.onclick = (e) => { const b = e.target.closest("button"); if (b) { state.pair = b.dataset.pair.split(","); sync(); } };
     }
@@ -329,6 +338,26 @@
         box.innerHTML = `<p class="copy">Could not load this case (${esc(e.message)}).</p>`;
       }
     }
+
+    async function loadPolicy() {
+      try {
+        const p = await getJSON("/api/policy");
+        const b = p.before, a = p.after;
+        if (b && a) {
+          document.getElementById("policy-stats").innerHTML =
+            statTile("Sent to a human", b.escalated_to_human, a.escalated_to_human, "of 90 runs, before and after two decisions") +
+            statTile("Unnecessary escalations", b.unnecessary_escalations, a.unnecessary_escalations, "a person pulled in when every source answered") +
+            statTile("Billed resolutions", p.billed.v3, p.billed.v3p, "proved, no human: what a bank pays for (Dodo Payments)") +
+            statTile("False claims / harmful", `${b.false_claims_sent}/${b.harmful_actions}`, `${a.false_claims_sent}/${a.harmful_actions}`, "fewer humans, same safety");
+        }
+        document.getElementById("rules").innerHTML = p.rules.map((r) => `<article class="card">
+          <p class="num">${esc(r.rule_id)} · <span style="color:${r.license === "active" ? "var(--mint-ink)" : "var(--bad)"}">${r.license === "active" ? "licensed" : "revoked"}</span></p>
+          <h3>“${esc(r.decision)}”</h3>
+          <p>Decided by ${esc(r.decided_by)} on ${esc(r.source_case?.escalation_id)} (seed ${esc(r.source_case?.seed)}). Applies when ${r.conditions.map((c) => `${esc(c.op)}.${esc(c.field)} = ${esc(c.equals)}`).join(" and ")}. Cited in ${r.cited_in_runs} runs.</p>
+        </article>`).join("");
+      } catch (e) { document.getElementById("rules").innerHTML = `<p class="copy">Could not load the rules (${esc(e.message)}).</p>`; }
+    }
+    loadPolicy();
 
     document.addEventListener("click", (e) => {
       const b = e.target.closest("[data-copy]");

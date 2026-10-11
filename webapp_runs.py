@@ -13,6 +13,7 @@ from sim.stress import stress_flags
 
 ROOT = Path(__file__).resolve().parent
 RUN_FILES = {v: ROOT / "runs" / f"{v}-stress-x3.jsonl" for v in ("v1", "v2", "v3")}
+RUN_FILES["v3p"] = ROOT / "runs" / "v3-policy-stress-x3.jsonl"  # v3 after two ask-once decisions
 BY_SEED = {s.seed: s for s in build_catalog()}
 
 
@@ -139,3 +140,28 @@ def _step(x: dict) -> dict:
     else:
         said = "ok"
     return {"seq": x["seq"], "op": x["op"], "receipt_id": x["receipt_id"], "ok": x["ok"], "said": said}
+
+
+def policy() -> dict:
+    """Committed rules, their license state, and what the decisions changed."""
+    from billing.dodo import RESOLUTION_EVENT, billable_event
+    from policy import license
+    from policy.store import load_rules
+
+    rules = []
+    for rule in load_rules():
+        state = license.state(rule["rule_id"])
+        rules.append({
+            "rule_id": rule["rule_id"],
+            "decision": rule.get("decision"),
+            "decided_by": rule.get("decided_by"),
+            "source_case": rule.get("source_case"),
+            "conditions": rule.get("conditions"),
+            "license": "revoked" if state["event"] == "revoked" else "active",
+            "license_reason": state.get("reason"),
+            "cited_in_runs": sum(1 for r in _records("v3p")
+                                 if rule["rule_id"] in license.cited_rules(r)),
+        })
+    before, after = summary().get("v3"), summary().get("v3p")
+    billed = {v: sum(1 for r in _records(v) if billable_event(r) == RESOLUTION_EVENT) for v in ("v3", "v3p")}
+    return {"rules": rules, "before": before, "after": after, "billed": billed}

@@ -49,9 +49,10 @@ def test_recorded_runs_payloads():
     import webapp_runs
 
     summary = webapp_runs.summary()
-    assert set(summary) == {"v1", "v2", "v3"}
+    assert set(summary) == {"v1", "v2", "v3", "v3p"}
     case = webapp_runs.case(28, rep=1)
-    assert set(case["runs"]) == {"v1", "v2", "v3"}
+    assert set(case["runs"]) == {"v1", "v2", "v3", "v3p"}
+    assert {r["rule_id"] for r in webapp_runs.policy()["rules"]} == {"agreed-credit-v1", "switch-failed-but-credited-v1"}
     v3 = case["runs"]["v3"]
     assert v3["trace_id"] and v3["steps"] and v3["attempts"]
     assert webapp_runs.case(99) is None

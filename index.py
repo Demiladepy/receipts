@@ -39,3 +39,8 @@ def runs_case(seed: int, rep: int = 1):
     if payload is None:
         raise HTTPException(status_code=404, detail="No case with that seed.")
     return payload
+
+
+@app.get("/api/policy")
+def policy_state():
+    return webapp_runs.policy()
