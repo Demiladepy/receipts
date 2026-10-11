@@ -1,0 +1,5 @@
+i have implemented some parts using cursor and i want to continue here , i have deploy to vercel as well and also i want you to use firecrawl to check twitter for every tag of neathacks or neatlogs in the last 24 hours so as to assess evrryones idea and also use it to improve mine drastically and that should help me win this hopefully
+
+---
+
+i have implemented some parts using cursor and i want to continue here , i have deploy to vercel as well and also i want you to use firecrawl to check twitter for every tag of neathacks or neatlogs in the last 24 hours so as to assess evrryones idea and also use it to improve mine drastically and that should help me win this hopefully
