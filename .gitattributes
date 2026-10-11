@@ -1,0 +1,5 @@
+# Byte-exact data: seeds are checked for reproducibility, runs are evidence.
+scenarios/*.json text eol=lf
+runs/*.jsonl text eol=lf
+policy/rules/*.json text eol=lf
+policy/inbox/*.json text eol=lf
