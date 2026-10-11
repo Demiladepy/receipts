@@ -1,0 +1,19 @@
+{
+  "rule_id": "agreed-credit-v1",
+  "case_type": "switch_success_no_credit",
+  "decision": "When the sender ledger, the switch and the beneficiary bank all agree the credit posted, prove it: tell the customer it was credited, cite the beneficiary bank's receipt (bank, account, time), and ask them to check with the recipient. No reversal, no escalation.",
+  "instructions": "When the sender ledger shows the debit, the switch says success and the beneficiary bank confirms the credit, treat the transfer as completed. Tell the customer the beneficiary account was credited. Cite the beneficiary bank's receipt: name the beneficiary bank, the beneficiary account and the time the credit posted. Ask the customer to check with the recipient. Do not reverse the debit. Do not escalate the case to a human. Do not tell the customer there is a discrepancy between the records.",
+  "customer_line": "The beneficiary bank has confirmed that your transfer was credited to the recipient's account, so please check with the recipient.",
+  "conditions": [
+    {"op": "sender.get_debit", "field": "debited", "equals": true},
+    {"op": "switch.get_status", "field": "status", "equals": "success"},
+    {"op": "beneficiary.get_credit", "field": "credited", "equals": true}
+  ],
+  "decided_by": "Demiladepy",
+  "decided_at": "2026-10-11T13:30:39+00:00",
+  "source_case": {
+    "escalation_id": "ESC-0002",
+    "seed": 2,
+    "trace_id": "9aaad966f3d49a681adb31eea6f34fde"
+  }
+}
