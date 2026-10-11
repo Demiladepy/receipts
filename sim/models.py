@@ -34,6 +34,7 @@ class ChaosFlags:
     connection_error_ops: tuple[str, ...] = ()
     stale_switch_status: str | None = None
     lying_reversal: bool = False
+    flaky_ops: tuple[str, ...] = ()  # fail with a timeout on the first call only
 
     def enabled(self) -> bool:
         return bool(
@@ -41,6 +42,7 @@ class ChaosFlags:
             or self.connection_error_ops
             or self.stale_switch_status
             or self.lying_reversal
+            or self.flaky_ops
         )
 
 

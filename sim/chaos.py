@@ -9,10 +9,14 @@ class ChaosSession:
     def __init__(self, flags: ChaosFlags):
         self.flags = flags
         self.switch_reads = 0
+        self.calls: dict[str, int] = {}
 
     def before(self, op: str) -> None:
         if op not in OPS:
             raise ValueError(f"unknown op {op}")
+        self.calls[op] = self.calls.get(op, 0) + 1
+        if op in self.flags.flaky_ops and self.calls[op] == 1:
+            raise SimTimeout(op)
         if op in self.flags.connection_error_ops:
             raise SimConnectionError(op)
         if op in self.flags.timeout_ops:
