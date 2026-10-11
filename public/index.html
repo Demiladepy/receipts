@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Receipts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-signal-violet: #5f79ff;
+      --color-mint-pulse: #01fe93;
+      --color-pure-white: #ffffff;
+      --color-ink-black: #000000;
+      --color-fog-gray: #f5f5f5;
+      --color-mist-gray: #a6a6a6;
+      --color-ash-gray: #4d4d4d;
+      --color-slate-gray: #707070;
+      --surface-tint-wash: #d9defc;
+      --font-ui: "Varela Round", "Segoe UI", sans-serif;
+      --page-max-width: 1200px;
+      --radius-cards: 16px;
+      --radius-buttons: 100px;
+      --shadow-nav: 0 0 48px rgba(0, 0, 0, 0.1);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      background: var(--color-pure-white);
+      color: var(--color-ink-black);
+      font-family: var(--font-ui);
+      font-weight: 400;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+    button { font: inherit; color: inherit; }
+    .nav-wrap { display: flex; justify-content: center; padding: 24px 16px 0; }
+    .nav {
+      align-items: center;
+      background: var(--color-pure-white);
+      border-radius: 16px;
+      box-shadow: var(--shadow-nav);
+      display: flex;
+      gap: 16px;
+      justify-content: space-between;
+      padding: 12px 20px;
+      width: min(var(--page-max-width), 100%);
+    }
+    .logo { align-items: center; display: flex; font-size: 15px; gap: 8px; letter-spacing: -0.017em; }
+    .rings { border: 1.5px solid var(--color-ink-black); border-radius: 100px; height: 18px; position: relative; width: 18px; }
+    .rings::after { border: 1.5px solid var(--color-ink-black); border-radius: 100px; content: ""; inset: 4px; position: absolute; }
+    .nav-links { align-items: center; display: flex; flex-wrap: wrap; gap: 8px 16px; }
+    .nav-links a { color: var(--color-ink-black); font-size: 15px; line-height: 1.4; padding: 8px; text-decoration: none; }
+    .nav-links a:hover { color: var(--color-signal-violet); }
+    .pill {
+      background: var(--color-signal-violet);
+      border-radius: var(--radius-buttons);
+      color: var(--color-pure-white);
+      display: inline-block;
+      font-size: 15px;
+      line-height: 1.4;
+      padding: 10px 20px;
+      text-decoration: none;
+    }
+    .nav-links a.pill, .nav-links a.pill:hover { color: var(--color-pure-white); }
+    .stripe { display: flex; height: 3px; margin-top: 28px; }
+    .stripe span { flex: 1; }
+    .stripe .mint { background: var(--color-mint-pulse); }
+    .stripe .violet { background: var(--color-signal-violet); }
+    .stripe .ink { background: var(--color-ink-black); }
+    .page .stripe { margin: 0 calc(50% - 50vw) 48px; width: 100vw; }
+    .page { margin: 0 auto; max-width: var(--page-max-width); padding: 40px 16px 80px; }
+    .intro { margin: 64px 0 80px; max-width: 46rem; position: relative; }
+    .intro h1 { font-size: clamp(36px, 6vw, 56px); font-weight: 400; letter-spacing: -0.02em; line-height: 1.15; margin: 12px 0 20px; }
+    .lead { color: var(--color-ash-gray); font-size: 15px; line-height: 1.5; margin: 0 0 24px; }
+    .section { margin: 0 0 80px; }
+    .section h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 400; letter-spacing: -0.02em; line-height: 1.15; margin: 8px 0 12px; }
+    .section-copy { color: var(--color-ash-gray); margin: 0 0 24px; max-width: 40rem; }
+    .section-copy a { color: var(--color-signal-violet); }
+    .rules, .steps, .facts { display: grid; gap: 20px; }
+    .rules { grid-template-columns: repeat(4, 1fr); }
+    .steps { grid-template-columns: repeat(3, 1fr); }
+    .facts { grid-template-columns: 1.2fr 1fr 1fr; }
+    .rule, .step, .fact { background: var(--color-pure-white); border: 1px solid var(--color-mist-gray); border-radius: var(--radius-cards); padding: 24px; }
+    .rule h3, .step h3, .fact h3 { font-size: 20px; font-weight: 400; letter-spacing: -0.017em; line-height: 1.25; margin: 8px 0 12px; }
+    .rule p, .step p, .fact p { color: var(--color-ash-gray); font-size: 15px; line-height: 1.5; margin: 0; }
+    .num, .eyebrow, .index-label { color: var(--color-signal-violet); font-size: 12px; line-height: 1.2; }
+    .index-label { margin: 0 0 12px; }
+    .desk-label { margin-top: 8px; }
+    #case-index { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; }
+    #case-index button {
+      appearance: none; background: transparent; border: 0; border-radius: var(--radius-buttons); cursor: pointer;
+      display: flex; flex: 0 0 auto; flex-direction: column; gap: 2px; min-width: 9.5rem; padding: 10px 18px; text-align: left;
+    }
+    #case-index button small { color: var(--color-slate-gray); display: block; font-size: 12px; line-height: 1.2; }
+    #case-index button:hover { color: var(--color-signal-violet); }
+    #case-index button[aria-pressed="true"] { background: var(--color-signal-violet); color: var(--color-pure-white); }
+    #case-index button[aria-pressed="true"] small { color: var(--color-pure-white); }
+    #case-index button:focus-visible { outline: 2px solid var(--color-signal-violet); outline-offset: 2px; }
+    .hero { margin: 48px 0 0; position: relative; }
+    .sparkle { background: var(--surface-tint-wash); opacity: 0.45; pointer-events: none; position: absolute; }
+    .sparkle.a { clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); height: 18px; left: 8%; top: -8px; width: 18px; }
+    .sparkle.b { border-radius: 100px; height: 8px; right: 18%; top: 12px; width: 8px; }
+    .sparkle.c { clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); height: 12px; right: 6%; top: 64px; width: 12px; }
+    .case-name { font-size: clamp(32px, 5vw, 48px); font-weight: 400; letter-spacing: -0.02em; line-height: 1.15; margin: 12px 0 16px; }
+    .meta { color: var(--color-slate-gray); display: flex; flex-wrap: wrap; font-size: 12px; gap: 8px 20px; line-height: 1.2; }
+    .complaint { color: var(--color-ash-gray); font-size: 15px; line-height: 1.4; margin: 20px 0 0; max-width: 42rem; }
+    .chaos { color: var(--color-slate-gray); font-size: 12px; line-height: 1.2; margin: 12px 0 0; }
+    .sheets { display: grid; gap: 20px; grid-template-columns: 1fr 1fr; margin-top: 40px; }
+    .sheet { background: var(--color-pure-white); border: 1px solid var(--color-mist-gray); border-radius: var(--radius-cards); padding: 24px; position: relative; }
+    .sheet h2 { color: var(--color-signal-violet); font-size: 12px; font-weight: 400; letter-spacing: -0.017em; line-height: 1.2; margin: 0 0 16px; padding-right: 96px; }
+    .stamp { border: 1px solid var(--color-ink-black); border-radius: var(--radius-buttons); font-size: 12px; line-height: 1.2; padding: 6px 12px; position: absolute; right: 24px; top: 20px; }
+    .stamp.allowed { border-color: var(--color-mint-pulse); }
+    .reply { color: var(--color-ink-black); font-size: 15px; line-height: 1.4; margin: 0 0 16px; }
+    .note { color: var(--color-ash-gray); font-size: 13px; line-height: 1.4; margin: -8px 0 16px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border-top: 1px solid var(--color-fog-gray); font-size: 12px; font-weight: 400; line-height: 1.2; padding: 8px 4px; text-align: left; vertical-align: top; }
+    th { color: var(--color-slate-gray); }
+    td { color: var(--color-ash-gray); }
+    .claim { list-style: none; margin: 8px 0 16px; padding: 0; }
+    .claim li { border-top: 1px solid var(--color-fog-gray); padding: 12px 0; }
+    .claim strong { font-size: 13px; font-weight: 400; }
+    .proved::before, .unproved::before { border-radius: 100px; content: ""; display: inline-block; height: 8px; margin-right: 8px; width: 8px; }
+    .proved::before { background: var(--color-mint-pulse); }
+    .unproved::before { background: var(--color-ink-black); }
+    .status, .error { padding: 48px 0; }
+    footer { color: var(--color-slate-gray); font-size: 13px; line-height: 1.5; margin: 0 auto; max-width: var(--page-max-width); padding: 0 16px 48px; }
+    @media (max-width: 900px) { .rules, .steps, .facts { grid-template-columns: 1fr; } }
+    @media (max-width: 800px) {
+      .nav { align-items: flex-start; flex-direction: column; }
+      .sheets { grid-template-columns: 1fr; }
+      .sparkle { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="nav-wrap">
+    <nav class="nav">
+      <div class="logo"><span class="rings" aria-hidden="true"></span>Receipts</div>
+      <div class="nav-links">
+        <a href="#rules">Rules</a>
+        <a href="#how">How it works</a>
+        <a href="#plan">Plan</a>
+        <a class="pill" href="#desk">Open a case</a>
+      </div>
+    </nav>
+  </div>
+  <div class="stripe" aria-hidden="true"><span class="mint"></span><span class="violet"></span><span class="ink"></span></div>
+  <main class="page">
+    <section class="intro">
+      <span class="sparkle a" aria-hidden="true"></span>
+      <span class="sparkle b" aria-hidden="true"></span>
+      <span class="sparkle c" aria-hidden="true"></span>
+      <p class="eyebrow">Debited, not credited</p>
+      <h1>It doesn't say done until it can prove it.</h1>
+      <p class="lead">A customer says the money left their account and never arrived. Receipts reads the sender bank, the switch, and the beneficiary bank separately, then refuses to send any sentence it cannot point at a trace.</p>
+      <a class="pill" href="#desk">Open a case</a>
+    </section>
+
+    <section class="section" id="rules">
+      <p class="eyebrow">The desk</p>
+      <h2>Four rules.</h2>
+      <p class="section-copy">The reply is a support answer. The verifier is the part that can stop it.</p>
+      <div class="rules">
+        <article class="rule">
+          <p class="num">01</p>
+          <h3>Every claim needs a receipt.</h3>
+          <p>Each fact in the outgoing reply has to match a tool span. If it does not, the send is blocked.</p>
+        </article>
+        <article class="rule">
+          <p class="num">02</p>
+          <h3>Receipts expire.</h3>
+          <p>A balance or debit claim counts only when that read happened after the last action that could have changed it.</p>
+        </article>
+        <article class="rule">
+          <p class="num">03</p>
+          <h3>Sources can disagree.</h3>
+          <p>The sender ledger, the switch, and the beneficiary bank are asked separately. A conflict is escalated, not smoothed over.</p>
+        </article>
+        <article class="rule">
+          <p class="num">04</p>
+          <h3>Ask once, then it is policy.</h3>
+          <p>A new kind of case goes to a person. The decision comes back as a committed rule and a test.</p>
+        </article>
+      </div>
+    </section>
+
+    <div class="stripe" aria-hidden="true"><span class="mint"></span><span class="violet"></span><span class="ink"></span></div>
+
+    <section class="section" id="how">
+      <p class="eyebrow">One complaint</p>
+      <h2>How a reply leaves the desk.</h2>
+      <p class="section-copy">The banks here are simulated. The chaos is on purpose: a timeout, a dropped connection, a stale switch, or a reversal that says success and does not post.</p>
+      <div class="steps">
+        <article class="step">
+          <p class="num">Read</p>
+          <h3>Four records, in order.</h3>
+          <p>Sender debit, sender balance, switch status, beneficiary credit. A failed read is named. The missing fact is not invented.</p>
+        </article>
+        <article class="step">
+          <p class="num">v1</p>
+          <h3>Trust the tool, once.</h3>
+          <p>If the transfer failed and the debit is still open, v1 reverses once and trusts that response. It does not read the ledger again.</p>
+        </article>
+        <article class="step">
+          <p class="num">v2</p>
+          <h3>Prove it, or say it did not post.</h3>
+          <p>A reversal is posted only when a later debit read says so. If the tool reported success and the ledger is still open, that is the reply.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="eyebrow">What is on the desk</p>
+      <h2>Thirty complaints. One of them lies.</h2>
+      <div class="facts">
+        <article class="fact">
+          <p class="num">Seed 28</p>
+          <h3>The reversal reports success and the debit stays open.</h3>
+          <p>v1 says the reversal was processed. That claim is blocked, because a reversal report is not a ledger read. v2 says the debit is still open.</p>
+        </article>
+        <article class="fact">
+          <p class="num">23 of 30</p>
+          <h3>v1 can already send.</h3>
+          <p>Credited transfers, already-reversed debits, conflicts, amounts over the limit, and failed tools are proved by the spans they cite.</p>
+        </article>
+        <article class="fact">
+          <p class="num">30 of 30</p>
+          <h3>v2 sends with zero unproved claims.</h3>
+          <p>Seeds 9 to 14 keep the reversal sentence after a second ledger read. Seed 28 changes the sentence.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="plan">
+      <p class="eyebrow">cfo.ai</p>
+      <h2>What a proved reply costs.</h2>
+      <p class="section-copy">The plan is the cfo.ai model. Price, complaints per bank, new banks, churn, platform cost, and opening cash are assumptions. The proved share and the inference cost are measured on this agent: v2 allows 30 of 30, and a case does not call a model. Payroll is 0. Cash is counted in the same month. Currency is USD.</p>
+      <div class="facts">
+        <article class="fact">
+          <p class="num">Price</p>
+          <h3>$2 per proved reply.</h3>
+          <p>A planning price, not a contract. One bank is assumed to file 200 complaints a month. At that price, October revenue on the base plan is $400.</p>
+        </article>
+        <article class="fact">
+          <p class="num">Base</p>
+          <h3>Cash stays positive through December 2027.</h3>
+          <p>October 2026: 1 bank, $20 platform, $380 operating profit, $380 ending cash. December 2027: 15 banks, $6,000 revenue, $47,700 ending cash. Opening cash is an assumption of $0.</p>
+        </article>
+        <article class="fact">
+          <p class="num">Downside</p>
+          <h3>No bank, and the platform still costs $20.</h3>
+          <p>Revenue stays $0. Cash is −$20 in October 2026 and −$300 in December 2027. The upside, at $4 and 3 new banks a month, ends December 2027 at $575,700.</p>
+        </article>
+      </div>
+      <p class="section-copy"><a href="https://app.cfo.ai/s/p_AQHSpgYkMmI4ZTE2YjMtM2UwNi00NTk4LTkwNWEtNjhlY2QwOWNlYWFjDWRlZmF1bHRfbGF5ZXI">Open the model</a></p>
+    </section>
+
+    <p class="index-label desk-label" id="desk">Cases</p>
+    <div id="case-index"></div>
+    <div id="file"><p class="status">Opening the case file…</p></div>
+  </main>
+  <footer>Simulated sender ledger, switch, and beneficiary bank. Amounts are NGN. Both replies are shown. Only an allowed one would be sent.</footer>
+  <script>
+    const indexEl = document.getElementById("case-index");
+    const fileEl = document.getElementById("file");
+    let selected = 28;
+
+    function el(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text != null) node.textContent = text;
+      return node;
+    }
+
+    function stamp(allowed) {
+      return el("div", "stamp " + (allowed ? "allowed" : "blocked"), allowed ? "Allowed" : "Blocked");
+    }
+
+    function sheet(title, side, note) {
+      const card = el("section", "sheet");
+      card.append(stamp(side.allowed));
+      card.append(el("h2", null, title));
+      if (note) card.append(el("p", "note", note));
+      card.append(el("p", "reply", side.reply));
+      const claims = el("ul", "claim");
+      side.claims.forEach((claim) => {
+        const item = el("li");
+        item.append(el("strong", claim.proved ? "proved" : "unproved", claim.proved ? "Proved" : "Unproved"));
+        item.append(document.createTextNode(" " + claim.statement));
+        const detail = claim.proved
+          ? claim.op + (claim.read_at ? " · " + claim.read_at : "")
+          : claim.reason;
+        item.append(el("div", "chaos", detail));
+        claims.append(item);
+      });
+      card.append(claims);
+      const table = document.createElement("table");
+      const head = document.createElement("tr");
+      ["When", "Tool", "Returned"].forEach((label) => head.append(el("th", null, label)));
+      table.append(head);
+      side.spans.forEach((span) => {
+        const row = document.createElement("tr");
+        row.append(el("td", null, span.read_at || "—"));
+        row.append(el("td", null, span.op));
+        row.append(el("td", null, span.ok ? span.summary : span.error));
+        table.append(row);
+      });
+      card.append(table);
+      const ledger = side.ledger_reversal_applied ? "yes" : "no";
+      card.append(el("p", "chaos", "Ledger reversal applied after this run: " + ledger));
+      return card;
+    }
+
+    function renderFile(data) {
+      document.title = data.complaint_id + " · Receipts";
+      fileEl.replaceChildren();
+      const hero = el("section", "hero");
+      hero.append(el("p", "eyebrow", data.complaint_id + " · " + data.pattern.replaceAll("_", " ")));
+      hero.append(el("h2", "case-name", data.customer_name));
+      const meta = el("div", "meta");
+      [data.transfer_id, data.amount, data.sender_bank + " → " + data.beneficiary_bank, data.complained_at].forEach((bit) => {
+        meta.append(el("span", null, bit));
+      });
+      hero.append(meta);
+      hero.append(el("p", "complaint", data.narrative));
+      hero.append(el("p", "chaos", "Chaos: " + data.chaos.join(", ")));
+      fileEl.append(hero);
+      const sheets = el("div", "sheets");
+      sheets.append(sheet("v1 would send", data.v1));
+      let note = "v2 reads the ledger again before it sends.";
+      if (data.v1.allowed) note = "The receipts already held, so v2 sends the same reply.";
+      else if (data.v1.reply === data.v2.reply) note = "v2 reads the ledger again. The sentence stays. The later debit read is the receipt.";
+      sheets.append(sheet("v2 sends", data.v2, note));
+      fileEl.append(sheets);
+    }
+
+    async function openCase(seed) {
+      selected = seed;
+      [...indexEl.children].forEach((button) => {
+        const pressed = Number(button.dataset.seed) === seed;
+        button.setAttribute("aria-pressed", String(pressed));
+        if (pressed) {
+          const left = button.offsetLeft - (indexEl.clientWidth - button.offsetWidth) / 2;
+          indexEl.scrollTo({ left: Math.max(0, left) });
+        }
+      });
+      fileEl.replaceChildren(el("p", "status", "Reading case " + String(seed).padStart(3, "0") + "…"));
+      try {
+        const response = await fetch("/api/cases/" + seed);
+        if (!response.ok) throw new Error("Case " + seed + " returned " + response.status);
+        renderFile(await response.json());
+      } catch (error) {
+        fileEl.replaceChildren(el("p", "error", error.message));
+      }
+    }
+
+    async function boot() {
+      try {
+        const response = await fetch("/api/scenarios");
+        if (!response.ok) throw new Error("The case index returned " + response.status);
+        const rows = await response.json();
+        rows.forEach((row) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.dataset.seed = String(row.seed);
+          button.setAttribute("aria-pressed", "false");
+          button.append(el("span", null, row.complaint_id));
+          const name = el("span");
+          name.append(document.createTextNode(row.customer_name));
+          name.append(el("small", null, row.chaos[0] === "none" ? row.pattern.replaceAll("_", " ") : row.chaos[0]));
+          button.append(name);
+          button.addEventListener("click", () => openCase(row.seed));
+          indexEl.append(button);
+        });
+        await openCase(selected);
+      } catch (error) {
+        fileEl.replaceChildren(el("p", "error", error.message));
+      }
+    }
+
+    boot();
+  </script>
+</body>
+</html>

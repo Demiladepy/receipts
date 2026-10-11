@@ -1,3 +1,6 @@
 anthropic
 neatlogs==1.4.26
 python-dotenv
+pytest
+fastapi
+uvicorn
