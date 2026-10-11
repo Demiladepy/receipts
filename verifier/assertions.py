@@ -62,7 +62,7 @@ RULES: dict[str, Rule] = {
                        describe="the amount is over the escalation limit"),
     "escalated": Rule(("case.escalate",), lambda v, _: v.get("status") == "queued",
                       describe="the case was handed to a human"),
-    "policy": Rule(("policy.lookup",), lambda v, x: v.get("rule_id") == x,
+    "policy": Rule(("policy.lookup",), lambda v, x: v.get("found") is True and v.get("rule_id") == x,
                    describe="value = rule_id of a committed policy rule"),
     "tool_failed": Rule((), lambda v, x: True, describe="value = the error code of a failed call"),
 }
@@ -136,7 +136,8 @@ class ReplyVerdict:
 
 def verify_reply(claims: list[Claim], next_step: str, book: ReceiptBook) -> ReplyVerdict:
     results = tuple(check_claim(claim, book) for claim in claims)
-    step_reason = _guard_next_step(next_step)
+    earned = frozenset().union(*(RULES[r.claim.assertion].may_say for r in results if r.proved))
+    step_reason = _guard_next_step(next_step, earned)
     allowed = bool(results) and all(r.proved for r in results) and step_reason is None
     if not results:
         step_reason = step_reason or "The reply makes no claim a receipt can prove."
@@ -195,12 +196,14 @@ def _text_checked(claim: Claim, rule: Rule) -> ClaimResult:
     return ClaimResult(claim, True, None)
 
 
-def _guard_next_step(text: str) -> str | None:
+def _guard_next_step(text: str, earned: frozenset[str] = frozenset()) -> str | None:
+    """A next step may repeat what a proved claim earned, but may not add a new fact."""
     if _DIGIT.search(text or ""):
         return "a next step may not promise amounts, dates or timelines"
-    word = _unearned_word(text or "", frozenset())
+    word = _unearned_word(text or "", earned)
     if word:
-        return f"a next step may not say {word!r}"
+        return (f"the next step says {word!r}, which no proved claim in this reply earns; "
+                "put facts in claims and keep next_step to what happens next")
     return None
 
 
