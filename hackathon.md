@@ -18,18 +18,20 @@ Pending. No team name or public handle has been chosen in this repo. The GitHub 
 
 In the repo today:
 
-- Python simulator: sender ledger, switch, beneficiary bank, 30 fixed seeds in `scenarios/seeds.json`
-- Naive v1 agent in `agent/`: fixed policy, tool spans through neatlogs, prompt text tagged `v1`
-- neatlogs 1.4.26. Tests keep export off and read spans from a local in-memory exporter
-- Entire CLI 0.11.4, enabled for Claude Code only. Cursor is not enabled. This machine is not logged in to Entire
+- Python simulator: sender ledger, switch, beneficiary bank, 30 fixed seeds (`sim/catalog.py`). `sim/stress.py` adds a harder, seed-derived chaos profile on the same seeds: first-call timeouts, reversals that report success and never post, and a stale first switch read.
+- Model-driven agent (`agent/llm_agent.py`): gpt-4.1-mini through the OpenAI SDK (any OpenAI-compatible endpoint via `OPENAI_BASE_URL`). The model plans and picks tools; every tool call runs in its own neatlogs TOOL span.
+- Receipts (`agent/receipts.py`): a receipt id **is** the neatlogs span id of the tool call. Every claim in a reply cites one.
+- Verifier (`verifier/assertions.py`): deterministic, no model. Source authority, payload match, freshness after writes, switch staleness, policy fit, and a sentence guard against overclaiming.
+- Action gate (v3): `sender_reverse` refuses unless the latest receipts show the debit open, the switch failed, the beneficiary not credited, and the amount within the limit.
+- Ground-truth audit (`agent/truth.py`): grades every run against the simulator's hidden truth, so the numbers do not rest on our own verifier grading itself.
+- Ask-once loop (`policy/ask_once.py`): escalation pack, a human decision, headless Claude Code writes rule + test + commit.
+- neatlogs 1.4.26, exporting live (0 export failures). Entire CLI 0.11.4 with `commit_linking: always`; every commit since `094038b` carries an `Entire-Checkpoint` trailer.
 
 Demo: https://receipts-tau-liard.vercel.app
 
-Not used yet: a live neatlogs project, an exported trace.
-
 cfo.ai is connected for the Nithub workspace. The Receipts plan page holds the pricing, cost, revenue, and cash model. Link: https://app.cfo.ai/s/p_AQHSpgYkMmI4ZTE2YjMtM2UwNi00NTk4LTkwNWEtNjhlY2QwOWNlYWFjDWRlZmF1bHRfbGF5ZXI
 
-Crustdata is a published participant credit (5,000 credits), not one of the three required tools. A key is stored only in the gitignored `.env`. Receipts does not call the Crustdata API.
+Crustdata is a published participant credit, not one of the three required tools. Receipts does not call it: company and people data does not help settle a payment dispute.
 
 ## Build log
 
@@ -65,12 +67,27 @@ CLI install was not repeated. `entire --version` is already 0.11.4.
 - Production: https://receipts-tau-liard.vercel.app — checked `/` (200) and `/api/cases/28` (v1 blocked, v2 allowed, debit still open).
 - `.env` is gitignored and listed in `.vercelignore`. It was not part of the deploy.
 
+### Sun 11 Oct 2026, morning — model-driven agent, three versions, real traces
+
+Read the field first: 236 #neatHack posts from the previous 24 hours. Closest entry is a UPI dispute agent; several projects cite sources per claim. What nobody else posted: proof that **expires** after a write, and a decision that becomes **committed policy**. Those lead.
+
+- Replaced the fixed rule engine with a model that plans and picks tools. The old v1 prompt told the agent "Trust the reversal response. Do not read the ledger again." That plants the failure, so it was dropped; the new v1 prompt is a plain, reasonable first attempt.
+- **v1** (no gate). First real trace on seed 28, `b2074a54abad39f688ce970efccba7b4`: "We have reversed the debit", citing the reversal tool's acknowledgement. The ledger never posted it.
+- **v2** (reply gate + rules of evidence). Unproven claims sent fell to 0. Reading the v2 traces showed a new failure: it reversed when sources disagreed, and reversed transfers that had succeeded. `4b6e758cf6f4b72f467213ae94942e8f` (seed 18, switch success, no credit), `87a6d6874e3be571dc75ca80ddd592eb` (seed 22, already credited: pays twice). The verifier gated words, not actions.
+- **v3** (action gate). Money moves only on receipts. Two further fixes came from v3 traces: `8775a93955168544f031dba65aed24b9` (seed 24, over the limit, reversal let through) and `b58717d2c865bc0f38d3fb1d81203fff` (seed 27, reply withheld because a block reason was not actionable).
+- Commits, each with an Entire checkpoint: `094038b`, `d4af7c2`, `6fda35d`, `eaf2d94`, `412d40c`.
+- Tests: 75 passed (`PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q`).
+
+### Sun 11 Oct 2026 — ask once
+
+`python -m policy.ask_once pack --seed 21`: the agent escalated seed 21 (switch failed, beneficiary credited), trace `d12137202386aec8ce79d8349350cfa8`, pack in `policy/inbox/ESC-0021.json`. Decision by Demiladepy: option A, trust the beneficiary bank on whether the credit posted. Rule commit: pending (headless Claude Code needs `/login` on this machine).
+
 ### Planned, not done
 
-- neatlogs export of a real 30-seed run, then detections
-- Entire login, Cursor agent hook, and a checkpoint on the commit that contains this code
-- cfo.ai model for pricing, cost, revenue, and runway. Page: https://app.cfo.ai/s/p_AQHSpgYkMmI4ZTE2YjMtM2UwNi00NTk4LTkwNWEtNjhlY2QwOWNlYWFjDWRlZmF1bHRfbGF5ZXI
-- Demo video of 3 minutes or less, and #neatHack posts
+- Ask-once rule commit by headless Claude Code, then `replay --seed 22`
+- neatlogs detections on the v1 runs, prompt versions with labels
+- cfo.ai: cost per case from the runs below ($0.0047 at gpt-4.1-mini list price, $0.40 / $1.60 per 1M tokens)
+- Demo page on the model-driven runs; demo video; posts 2 to 4
 
 ## Demo
 
@@ -87,11 +104,10 @@ python -m uvicorn index:app --host 127.0.0.1 --port 8787
 
 ## Known limitations and next steps
 
-- v1 will say a reversal was processed when the reversal tool reports success and the debit was not updated (seed 28). The demo blocks that reply. v2 says the debit is still open.
-- Traces in tests are local only. They are not links a judge can open.
-- Entire is not recording this Cursor session.
-- cfo.ai opening cash, price, volume, and platform cost are planning assumptions. Inference cost is 0 because the agent does not call a model. There is no signed bank and no observed bank balance.
-- Team name for the log is still unset.
+- The banks and the switch are simulated. Chaos is seed-derived, so every run is reproducible but the faults are ours.
+- The verifier's sentence guard is a word list with negation handling. It is deterministic and explainable, not a language model; a sentence can still be misleading without using a guarded word.
+- v1 and v2 x3 runs were recorded before the last two v3 fixes (`6fda35d`, `eaf2d94`). v1 has no gate, so they do not change it.
+- One model, temperature 0, three repeats per version. Model output still varies between repeats; the counts are over 90 runs per version.
 
 ## Submission
 
@@ -108,33 +124,80 @@ Outstanding: exported neatlogs traces, an Entire checkpoint, the demo video, pub
 
 ## Tools
 
-- **Claude Code** — wrote the scaffold. Later simulator and agent code was written in Cursor.
-- **Entire** — installed and enabled for Claude Code. No checkpoint yet for the simulator or the agent.
-- **neatlogs** — local spans in tests. No hosted trace yet.
-- **cfo.ai** — Receipts plan in the Nithub workspace. Main, Downside, and Upside. Read back on Sat 10 Oct 2026: Main October 2026 is 1 bank, $400 revenue, $380 operating profit, $380 ending cash; December 2027 is 15 banks, $6,000 revenue, $47,700 ending cash. Downside cash is −$20 in October 2026. Inference input is 0.
+- **Claude Code** — wrote the scaffold, the model-driven agent, the verifier, the action gate and the ask-once loop. Saturday's simulator and first demo were written in Cursor (commit `ccff2a5`, no Entire checkpoint for that work). At runtime, headless Claude Code is the ask-once policy writer.
+- **Entire** — enabled for Claude Code with `commit_linking: always`. Every commit from `094038b` on carries an `Entire-Checkpoint` trailer; fix commits cite the neatlogs trace that triggered them.
+- **neatlogs** — every agent run is a trace: one AGENT span per case, a TOOL span per tool call (its span id is the receipt id), a CHAIN span per verifier check, and the model calls via `neatlogs.wrap`. Runs are tagged `prompt:v1|v2|v3` and `chaos:stress`.
+- **cfo.ai** — Receipts plan in the Nithub workspace. Main, Downside, and Upside. Read back on Sat 10 Oct 2026: Main October 2026 is 1 bank, $400 revenue, $380 operating profit, $380 ending cash; December 2027 is 15 banks, $6,000 revenue, $47,700 ending cash. Downside cash is −$20 in October 2026. That plan used inference cost 0; the measured cost is now $0.0047 per case (v3, gpt-4.1-mini) and needs to go into the model.
 
-## Failure taxonomy (v1)
+## Failure taxonomy
 
-_To be filled from hosted v1 traces, with trace IDs. Local result already seen: seed 28 claims a reversal that did not post._
+Generated by `python -m agent.taxonomy` from the run files. Every trace id is a neatlogs trace.
+
+### v1-stress-x3 (90 runs)
+
+| failure | runs | seeds | example trace |
+|---|---|---|---|
+| Said the reversal posted, citing the reversal tool's acknowledgement | 15 | 9, 11, 12, 21, 27, 29 | `7114b3729a515d65daf5e12c90dac9ff` (seed 9) |
+| Lying reversal: told the customer it was done, the debit was still open | 4 | 14, 28 | `82d6d120c7b95eea39c6375a447ac3c5` (seed 14) |
+| Reported a stale 'pending' switch read as the transfer's status | 24 | 1, 10, 15, 17, 23, 25, 28, 29 | `3915d3efdbb82648680a4e96e891ab50` (seed 1) |
+| Reversed when sources disagreed (switch vs beneficiary) | 3 | 21, 29 | `8bdac9e2e9621215bfbad2ac9cc9854b` (seed 29) |
+| Reversed without a successful read of every source | 4 | 27, 28 | `5b744930b5d6cb52a8c1a7ec33f1abf7` (seed 27) |
+| Did not escalate a case that needed a human | 8 | 22, 23, 25, 29 | `db5d73c43a94effd0ad4ad4fe1b6ac66` (seed 22) |
+| Other false claim sent | 1 | 30 | `91b7413e9af8f50dd812382a104faded` (seed 30) |
+
+### v2-stress-x3 (90 runs)
+
+| failure | runs | seeds | example trace |
+|---|---|---|---|
+| Reversed when sources disagreed (switch vs beneficiary) | 11 | 18, 19, 20, 21, 29 | `a9e8854c235f19c41c422d728909dc45` (seed 18) |
+| Reversed a transfer that had succeeded and been credited (pays twice) | 4 | 2, 3, 5 | `a68f00583b21c774a91f0e8aa916733d` (seed 3) |
+| Reversed without a successful read of every source | 3 | 27 | `be2541f9216568b9d6e7de68b9ae164b` (seed 27) |
+| Did not escalate a case that needed a human | 1 | 23 | `1b803ee4263f4de74506d956bae7f149` (seed 23) |
+| Reply withheld after three blocked attempts (safe failure) | 2 | 22, 27 | `1a623a5ae73a66cf817333ba5e75deba` (seed 22) |
+
+### v3-stress-x3 (90 runs)
+
+| failure | runs | seeds | example trace |
+|---|---|---|---|
+| none | 0 | | |
 
 ## Before / after (same 30 seeds)
 
-| Metric | v1 | v2 |
-|---|---|---|
-| Replies the verifier allows, of 30 | 23 | 30 |
-| Unproven claims sent | 7 reversal claims (seeds 9–14, 28) | 0 |
-| Cost per case | Inference $0. Base October platform $20 across 200 proved replies. | |
+30 stress seeds, three repeats each, gpt-4.1-mini, temperature 0. `python -m agent.bench summary runs/v1-stress-x3.jsonl runs/v2-stress-x3.jsonl runs/v3-stress-x3.jsonl`
+
+| metric | v1-stress-x3 | v2-stress-x3 | v3-stress-x3 |
+|---|---|---|---|
+| runs | 90 | 90 | 90 |
+| crashed | 0 | 0 | 0 |
+| resolved_correctly | 58 | 72 | 90 |
+| replies_sent | 90 | 88 | 90 |
+| false_claims_sent | 30 | 0 | 0 |
+| runs_with_false_claim | 28 | 0 | 0 |
+| unproven_claims_sent | 50 | 0 | 0 |
+| harmful_actions | 3 | 15 | 0 |
+| reversals_on_unconfirmed_evidence | 7 | 18 | 0 |
+| debits_left_open_silently | 9 | 0 | 0 |
+| replies_blocked_then_fixed | 0 | 17 | 32 |
+| tool_calls_avg | 3.5 | 6.6 | 6.4 |
+| cost_usd_total | 0.1312 | 0.4219 | 0.4249 |
+| cost_usd_per_case | 0.00146 | 0.00469 | 0.00472 |
+| latency_s_avg | 3.3 | 7.1 | 7.6 |
+
+- *resolved_correctly*: reply sent, no false claim (against hidden truth), no harmful action, and the right action taken or escalated.
+- *false_claims_sent*: claims the customer received that the simulator's ground truth contradicts.
+- *unproven_claims_sent*: claims the receipt verifier could not prove (v1 runs it in shadow).
+- *harmful_actions*: a reversal on a case that should not be reversed.
 
 ## Evidence checklist
 
 | Criterion | Evidence | Link |
 |---|---|---|
-| Agent (30%) | 30 scenarios + v2 pass rate | https://receipts-tau-liard.vercel.app |
-| Agent (30%) | Recovery trace | |
-| neatlogs, Entire, cfo.ai (25%) | v1 false "done" vs v2 trace, same seed | |
+| Agent (30%) | 30 seeds x 3, v3 90/90 resolved | `runs/v3-stress-x3.jsonl`, table above |
+| Agent (30%) | Recovery trace | `23e268c66a037086268d7abc3b1badc9` (v3 seed 28: re-reads stale switch, reversal not posted, re-reads ledger, escalates, tells the truth) |
+| neatlogs, Entire, cfo.ai (25%) | v1 false "done" vs v3 trace, same seed | v1 `b2074a54abad39f688ce970efccba7b4` vs v3 `23e268c66a037086268d7abc3b1badc9` (seed 28) |
 | neatlogs, Entire, cfo.ai (25%) | Detections firing on v1 | |
 | neatlogs, Entire, cfo.ai (25%) | Prompt v1/v2 label move | |
-| neatlogs, Entire, cfo.ai (25%) | Entire checkpoint: fix commit citing trace ID | |
+| neatlogs, Entire, cfo.ai (25%) | Entire checkpoint: fix commit citing trace ID | `6fda35d` (checkpoint `01M4MQRFKEN8E58195CMYGHFY1`, cites `8775a939…`) |
 | neatlogs, Entire, cfo.ai (25%) | Entire checkpoint: ask-once policy commit | |
 | neatlogs, Entire, cfo.ai (25%) | entire-graph output | |
 | neatlogs, Entire, cfo.ai (25%) | cfo.ai business plan | https://app.cfo.ai/s/p_AQHSpgYkMmI4ZTE2YjMtM2UwNi00NTk4LTkwNWEtNjhlY2QwOWNlYWFjDWRlZmF1bHRfbGF5ZXI |

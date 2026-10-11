@@ -1,0 +1,115 @@
+{
+  "escalation_id": "ESC-0021",
+  "complaint_id": "CMP-0021",
+  "case_type": "switch_failed_but_credited",
+  "reason": "The switch shows the transfer failed but the beneficiary was credited. This is a disagreement that cannot be resolved automatically.",
+  "narrative": "I am Ada Musa. I sent NGN 22,000.00 to account 3100000021 at Northline Bank. My account was debited but the beneficiary was not credited. Reference TXN-0021.",
+  "receipts": [
+    {
+      "receipt_id": "652655aea7fe9c54",
+      "seq": 1,
+      "op": "sender.get_debit",
+      "args": {
+        "transfer_id": "TXN-0021"
+      },
+      "ok": true,
+      "value": {
+        "transfer_id": "TXN-0021",
+        "account": "2100000021",
+        "bank": "Lumen MFB",
+        "amount_kobo": 2200000,
+        "currency": "NGN",
+        "debited": true,
+        "debit_at": "2026-10-10T03:39:00+01:00",
+        "reversal_applied": false,
+        "reversed_at": null,
+        "read_at": "2026-10-10T08:00:01+01:00"
+      },
+      "error": null
+    },
+    {
+      "receipt_id": "9fc10d2f2ed894f2",
+      "seq": 2,
+      "op": "switch.get_status",
+      "args": {
+        "transfer_id": "TXN-0021"
+      },
+      "ok": true,
+      "value": {
+        "transfer_id": "TXN-0021",
+        "status": "failed",
+        "amount_kobo": 2200000,
+        "currency": "NGN",
+        "updated_at": "2026-10-10T03:39:40+01:00",
+        "read_at": "2026-10-10T08:00:02+01:00"
+      },
+      "error": null
+    },
+    {
+      "receipt_id": "2bb93984c8d20034",
+      "seq": 3,
+      "op": "beneficiary.get_credit",
+      "args": {
+        "transfer_id": "TXN-0021"
+      },
+      "ok": true,
+      "value": {
+        "transfer_id": "TXN-0021",
+        "account": "3100000021",
+        "bank": "Northline Bank",
+        "credited": true,
+        "amount_kobo": 2200000,
+        "currency": "NGN",
+        "credit_at": "2026-10-10T03:40:30+01:00",
+        "read_at": "2026-10-10T08:00:03+01:00"
+      },
+      "error": null
+    },
+    {
+      "receipt_id": "c14cbd57d970821e",
+      "seq": 4,
+      "op": "policy.lookup",
+      "args": {
+        "case_type": "switch_failed_but_credited"
+      },
+      "ok": true,
+      "value": {
+        "found": false,
+        "case_type": "switch_failed_but_credited",
+        "note": "No committed rule. If you cannot resolve this on the evidence, escalate."
+      },
+      "error": null
+    }
+  ],
+  "seed": 21,
+  "trace_id": "d12137202386aec8ce79d8349350cfa8",
+  "amount": "NGN 22,000.00",
+  "pattern_seen": "switch_failed_but_credited",
+  "statements": [
+    {
+      "receipt_id": "652655aea7fe9c54",
+      "source": "sender ledger (authoritative for the debit and reversal)",
+      "op": "sender.get_debit",
+      "says": "debited=True, reversal_applied=False"
+    },
+    {
+      "receipt_id": "9fc10d2f2ed894f2",
+      "source": "payment switch (authoritative for the transfer instruction)",
+      "op": "switch.get_status",
+      "says": "status failed"
+    },
+    {
+      "receipt_id": "2bb93984c8d20034",
+      "source": "beneficiary bank (authoritative for whether the credit posted)",
+      "op": "beneficiary.get_credit",
+      "says": "credited=True at 2026-10-10T03:40:30+01:00"
+    }
+  ],
+  "customer_reply_sent": "Your account was debited with NGN 22,000.00 for the transfer TXN-0021. The payment switch shows the transfer failed. However, the beneficiary account was credited with NGN 22,000.00. We have escalated this case to a human for further investigation. Please wait for a human agent to contact you with an update.",
+  "options": [
+    "A. Trust the beneficiary bank on whether the credit posted: tell the customer it was credited, do not reverse, do not escalate.",
+    "B. Trust the switch: reverse the debit (risk: the customer is paid twice).",
+    "C. Keep escalating every case like this to a human."
+  ],
+  "asked_at": "2026-10-11T05:46:46+00:00"
+}

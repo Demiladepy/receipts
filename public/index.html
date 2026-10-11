@@ -4,133 +4,141 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Receipts</title>
+  <meta name="description" content="A support agent for 'debited but not credited' complaints that cannot send a sentence it cannot prove from a trace span.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Varela+Round&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --color-signal-violet: #5f79ff;
-      --color-mint-pulse: #01fe93;
-      --color-pure-white: #ffffff;
-      --color-ink-black: #000000;
-      --color-fog-gray: #f5f5f5;
-      --color-mist-gray: #a6a6a6;
-      --color-ash-gray: #4d4d4d;
-      --color-slate-gray: #707070;
-      --surface-tint-wash: #d9defc;
+      --violet: #5f79ff;
+      --mint: #01fe93;
+      --mint-ink: #007a45;
+      --white: #ffffff;
+      --ink: #000000;
+      --fog: #f5f5f5;
+      --mist: #a6a6a6;
+      --ash: #4d4d4d;
+      --slate: #707070;
+      --wash: #d9defc;
+      --bad: #d92d20;
+      --bad-wash: #fdecea;
+      --ok-wash: #e6fff3;
       --font-ui: "Varela Round", "Segoe UI", sans-serif;
-      --page-max-width: 1200px;
-      --radius-cards: 16px;
-      --radius-buttons: 100px;
-      --shadow-nav: 0 0 48px rgba(0, 0, 0, 0.1);
+      --font-mono: "JetBrains Mono", ui-monospace, monospace;
+      --max: 1200px;
+      --r: 16px;
     }
     * { box-sizing: border-box; }
-    html, body { margin: 0; min-height: 100%; }
-    body {
-      background: var(--color-pure-white);
-      color: var(--color-ink-black);
-      font-family: var(--font-ui);
-      font-weight: 400;
-      font-size: 15px;
-      line-height: 1.4;
-    }
+    html, body { margin: 0; overflow-x: clip; }
+    body { background: var(--white); color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.45; }
+    a { color: var(--violet); }
     button { font: inherit; color: inherit; }
+    code, .mono { font-family: var(--font-mono); font-size: 12px; }
+
     .nav-wrap { display: flex; justify-content: center; padding: 24px 16px 0; }
-    .nav {
-      align-items: center;
-      background: var(--color-pure-white);
-      border-radius: 16px;
-      box-shadow: var(--shadow-nav);
-      display: flex;
-      gap: 16px;
-      justify-content: space-between;
-      padding: 12px 20px;
-      width: min(var(--page-max-width), 100%);
-    }
-    .logo { align-items: center; display: flex; font-size: 15px; gap: 8px; letter-spacing: -0.017em; }
-    .rings { border: 1.5px solid var(--color-ink-black); border-radius: 100px; height: 18px; position: relative; width: 18px; }
-    .rings::after { border: 1.5px solid var(--color-ink-black); border-radius: 100px; content: ""; inset: 4px; position: absolute; }
-    .nav-links { align-items: center; display: flex; flex-wrap: wrap; gap: 8px 16px; }
-    .nav-links a { color: var(--color-ink-black); font-size: 15px; line-height: 1.4; padding: 8px; text-decoration: none; }
-    .nav-links a:hover { color: var(--color-signal-violet); }
-    .pill {
-      background: var(--color-signal-violet);
-      border-radius: var(--radius-buttons);
-      color: var(--color-pure-white);
-      display: inline-block;
-      font-size: 15px;
-      line-height: 1.4;
-      padding: 10px 20px;
-      text-decoration: none;
-    }
-    .nav-links a.pill, .nav-links a.pill:hover { color: var(--color-pure-white); }
-    .stripe { display: flex; height: 3px; margin-top: 28px; }
-    .stripe span { flex: 1; }
-    .stripe .mint { background: var(--color-mint-pulse); }
-    .stripe .violet { background: var(--color-signal-violet); }
-    .stripe .ink { background: var(--color-ink-black); }
-    .page .stripe { margin: 0 calc(50% - 50vw) 48px; width: 100vw; }
-    .page { margin: 0 auto; max-width: var(--page-max-width); padding: 40px 16px 80px; }
-    .intro { margin: 64px 0 80px; max-width: 46rem; position: relative; }
-    .intro h1 { font-size: clamp(36px, 6vw, 56px); font-weight: 400; letter-spacing: -0.02em; line-height: 1.15; margin: 12px 0 20px; }
-    .lead { color: var(--color-ash-gray); font-size: 15px; line-height: 1.5; margin: 0 0 24px; }
-    .section { margin: 0 0 80px; }
-    .section h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 400; letter-spacing: -0.02em; line-height: 1.15; margin: 8px 0 12px; }
-    .section-copy { color: var(--color-ash-gray); margin: 0 0 24px; max-width: 40rem; }
-    .section-copy a { color: var(--color-signal-violet); }
-    .rules, .steps, .facts { display: grid; gap: 20px; }
-    .rules { grid-template-columns: repeat(4, 1fr); }
-    .steps { grid-template-columns: repeat(3, 1fr); }
-    .facts { grid-template-columns: 1.2fr 1fr 1fr; }
-    .rule, .step, .fact { background: var(--color-pure-white); border: 1px solid var(--color-mist-gray); border-radius: var(--radius-cards); padding: 24px; }
-    .rule h3, .step h3, .fact h3 { font-size: 20px; font-weight: 400; letter-spacing: -0.017em; line-height: 1.25; margin: 8px 0 12px; }
-    .rule p, .step p, .fact p { color: var(--color-ash-gray); font-size: 15px; line-height: 1.5; margin: 0; }
-    .num, .eyebrow, .index-label { color: var(--color-signal-violet); font-size: 12px; line-height: 1.2; }
-    .index-label { margin: 0 0 12px; }
-    .desk-label { margin-top: 8px; }
-    #case-index { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; }
-    #case-index button {
-      appearance: none; background: transparent; border: 0; border-radius: var(--radius-buttons); cursor: pointer;
-      display: flex; flex: 0 0 auto; flex-direction: column; gap: 2px; min-width: 9.5rem; padding: 10px 18px; text-align: left;
-    }
-    #case-index button small { color: var(--color-slate-gray); display: block; font-size: 12px; line-height: 1.2; }
-    #case-index button:hover { color: var(--color-signal-violet); }
-    #case-index button[aria-pressed="true"] { background: var(--color-signal-violet); color: var(--color-pure-white); }
-    #case-index button[aria-pressed="true"] small { color: var(--color-pure-white); }
-    #case-index button:focus-visible { outline: 2px solid var(--color-signal-violet); outline-offset: 2px; }
-    .hero { margin: 48px 0 0; position: relative; }
-    .sparkle { background: var(--surface-tint-wash); opacity: 0.45; pointer-events: none; position: absolute; }
-    .sparkle.a { clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); height: 18px; left: 8%; top: -8px; width: 18px; }
-    .sparkle.b { border-radius: 100px; height: 8px; right: 18%; top: 12px; width: 8px; }
-    .sparkle.c { clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); height: 12px; right: 6%; top: 64px; width: 12px; }
-    .case-name { font-size: clamp(32px, 5vw, 48px); font-weight: 400; letter-spacing: -0.02em; line-height: 1.15; margin: 12px 0 16px; }
-    .meta { color: var(--color-slate-gray); display: flex; flex-wrap: wrap; font-size: 12px; gap: 8px 20px; line-height: 1.2; }
-    .complaint { color: var(--color-ash-gray); font-size: 15px; line-height: 1.4; margin: 20px 0 0; max-width: 42rem; }
-    .chaos { color: var(--color-slate-gray); font-size: 12px; line-height: 1.2; margin: 12px 0 0; }
-    .sheets { display: grid; gap: 20px; grid-template-columns: 1fr 1fr; margin-top: 40px; }
-    .sheet { background: var(--color-pure-white); border: 1px solid var(--color-mist-gray); border-radius: var(--radius-cards); padding: 24px; position: relative; }
-    .sheet h2 { color: var(--color-signal-violet); font-size: 12px; font-weight: 400; letter-spacing: -0.017em; line-height: 1.2; margin: 0 0 16px; padding-right: 96px; }
-    .stamp { border: 1px solid var(--color-ink-black); border-radius: var(--radius-buttons); font-size: 12px; line-height: 1.2; padding: 6px 12px; position: absolute; right: 24px; top: 20px; }
-    .stamp.allowed { border-color: var(--color-mint-pulse); }
-    .reply { color: var(--color-ink-black); font-size: 15px; line-height: 1.4; margin: 0 0 16px; }
-    .note { color: var(--color-ash-gray); font-size: 13px; line-height: 1.4; margin: -8px 0 16px; }
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border-top: 1px solid var(--color-fog-gray); font-size: 12px; font-weight: 400; line-height: 1.2; padding: 8px 4px; text-align: left; vertical-align: top; }
-    th { color: var(--color-slate-gray); }
-    td { color: var(--color-ash-gray); }
-    .claim { list-style: none; margin: 8px 0 16px; padding: 0; }
-    .claim li { border-top: 1px solid var(--color-fog-gray); padding: 12px 0; }
-    .claim strong { font-size: 13px; font-weight: 400; }
-    .proved::before, .unproved::before { border-radius: 100px; content: ""; display: inline-block; height: 8px; margin-right: 8px; width: 8px; }
-    .proved::before { background: var(--color-mint-pulse); }
-    .unproved::before { background: var(--color-ink-black); }
-    .status, .error { padding: 48px 0; }
-    footer { color: var(--color-slate-gray); font-size: 13px; line-height: 1.5; margin: 0 auto; max-width: var(--page-max-width); padding: 0 16px 48px; }
-    @media (max-width: 900px) { .rules, .steps, .facts { grid-template-columns: 1fr; } }
-    @media (max-width: 800px) {
+    .nav { align-items: center; background: var(--white); border-radius: 16px; box-shadow: 0 0 48px rgba(0,0,0,.1);
+           display: flex; gap: 16px; justify-content: space-between; padding: 12px 20px; width: min(var(--max), 100%); }
+    .logo { align-items: center; display: flex; gap: 8px; }
+    .rings { border: 1.5px solid var(--ink); border-radius: 100px; height: 18px; position: relative; width: 18px; }
+    .rings::after { border: 1.5px solid var(--ink); border-radius: 100px; content: ""; inset: 4px; position: absolute; }
+    .nav-links { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; }
+    .nav-links a { color: var(--ink); padding: 8px; text-decoration: none; }
+    .nav-links a:hover { color: var(--violet); }
+    .pill { background: var(--violet); border-radius: 100px; color: var(--white) !important; display: inline-block; padding: 10px 20px; text-decoration: none; }
+    .stripe { display: flex; height: 3px; margin: 28px calc(50% - 50vw) 0; width: 100vw; }
+    .stripe span { flex: 1; } .stripe .m { background: var(--mint); } .stripe .v { background: var(--violet); } .stripe .k { background: var(--ink); }
+
+    .page { margin: 0 auto; max-width: var(--max); padding: 0 16px 80px; }
+    .eyebrow { color: var(--violet); font-size: 12px; margin: 0; }
+    h1 { font-size: clamp(36px, 6vw, 60px); font-weight: 400; letter-spacing: -0.02em; line-height: 1.1; margin: 12px 0 20px; }
+    h2 { font-size: clamp(26px, 4vw, 40px); font-weight: 400; letter-spacing: -0.02em; line-height: 1.15; margin: 8px 0 12px; }
+    h3 { font-size: 19px; font-weight: 400; letter-spacing: -0.015em; line-height: 1.25; margin: 6px 0 10px; }
+    .lead, .copy { color: var(--ash); max-width: 44rem; }
+    .intro { margin: 64px 0 40px; }
+    section { margin: 0 0 88px; scroll-margin-top: 24px; }
+
+    .stats { display: grid; gap: 16px; grid-template-columns: repeat(4, 1fr); margin-top: 40px; }
+    .stat { border: 1px solid var(--mist); border-radius: var(--r); padding: 20px; }
+    .stat .big { font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.02em; line-height: 1.1; margin: 6px 0; }
+    .stat .big small { color: var(--slate); font-size: 15px; }
+    .stat p { color: var(--ash); font-size: 13px; margin: 0; }
+    .arrow { color: var(--mist); margin: 0 6px; }
+
+    .grid4 { display: grid; gap: 16px; grid-template-columns: repeat(4, 1fr); }
+    .grid3 { display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr); }
+    .card { border: 1px solid var(--mist); border-radius: var(--r); padding: 22px; background: var(--white); }
+    .card p { color: var(--ash); margin: 0; font-size: 14px; }
+    .num { color: var(--violet); font-size: 12px; margin: 0; }
+
+    .tablewrap { overflow-x: auto; border: 1px solid var(--mist); border-radius: var(--r); }
+    table { border-collapse: collapse; width: 100%; min-width: 520px; }
+    th, td { border-top: 1px solid var(--fog); font-size: 13px; padding: 10px 14px; text-align: left; vertical-align: top; }
+    thead th { border-top: 0; color: var(--slate); font-weight: 400; }
+    td.n { font-family: var(--font-mono); font-size: 13px; text-align: right; }
+    th.n { text-align: right; }
+    td.good { color: var(--mint-ink); } td.badn { color: var(--bad); }
+
+    /* case explorer */
+    .seeds { display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0 8px; }
+    .seeds button { appearance: none; background: var(--fog); border: 0; border-radius: 100px; cursor: pointer; font-family: var(--font-mono);
+                    font-size: 12px; min-width: 40px; padding: 8px 10px; position: relative; }
+    .seeds button[aria-pressed="true"] { background: var(--violet); color: var(--white); }
+    .seeds button.flag::after { background: var(--bad); border-radius: 100px; content: ""; height: 6px; position: absolute; right: 4px; top: 4px; width: 6px; }
+    .seeds button:focus-visible, .seg button:focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
+    .controls { align-items: center; display: flex; flex-wrap: wrap; gap: 12px 20px; margin: 8px 0 24px; color: var(--slate); font-size: 13px; }
+    .seg { background: var(--fog); border-radius: 100px; display: inline-flex; padding: 3px; }
+    .seg button { appearance: none; background: transparent; border: 0; border-radius: 100px; cursor: pointer; font-size: 13px; padding: 6px 14px; }
+    .seg button[aria-pressed="true"] { background: var(--white); box-shadow: 0 1px 4px rgba(0,0,0,.12); }
+    .complaint { background: var(--fog); border-radius: var(--r); padding: 20px 22px; }
+    .complaint .who { color: var(--slate); font-size: 12px; margin-bottom: 6px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .chip { border: 1px solid var(--mist); border-radius: 100px; color: var(--ash); font-size: 12px; padding: 4px 10px; }
+    .chip.truth { border-color: var(--violet); color: var(--violet); }
+    .chip.chaos { border-color: var(--bad); color: var(--bad); }
+
+    .sides { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; margin-top: 20px; }
+    .side { border: 1px solid var(--mist); border-radius: var(--r); padding: 22px; min-width: 0; }
+    .side header { align-items: flex-start; display: flex; gap: 12px; justify-content: space-between; margin-bottom: 14px; }
+    .side header h3 { margin: 0; }
+    .badge { border-radius: 100px; font-size: 12px; padding: 5px 11px; white-space: nowrap; }
+    .badge.ok { background: var(--ok-wash); color: var(--mint-ink); }
+    .badge.bad { background: var(--bad-wash); color: var(--bad); }
+    .badge.neutral { background: var(--fog); color: var(--ash); }
+    .label { color: var(--slate); font-size: 12px; margin: 18px 0 8px; }
+    .reply { border-left: 3px solid var(--violet); margin: 0; padding: 4px 0 4px 14px; }
+    .reply.none { border-color: var(--mist); color: var(--slate); }
+    .failures { list-style: none; margin: 12px 0 0; padding: 0; }
+    .failures li { background: var(--bad-wash); border-radius: 10px; color: var(--bad); font-size: 13px; margin-top: 6px; padding: 8px 12px; }
+    .claims { list-style: none; margin: 0; padding: 0; }
+    .claims li { border-top: 1px solid var(--fog); display: grid; gap: 4px 10px; grid-template-columns: 14px 1fr; padding: 10px 0; }
+    .dot { border-radius: 100px; height: 10px; margin-top: 5px; width: 10px; }
+    .dot.y { background: var(--mint); } .dot.n { background: var(--bad); }
+    .claims .meta { color: var(--slate); font-size: 12px; grid-column: 2; }
+    .claims .why { color: var(--bad); font-size: 12px; grid-column: 2; }
+    .steps { counter-reset: s; list-style: none; margin: 0; padding: 0; }
+    .steps li { align-items: baseline; border-top: 1px solid var(--fog); display: grid; font-size: 13px; gap: 8px; grid-template-columns: 26px 1fr auto; padding: 7px 0; }
+    .steps .seq { color: var(--slate); font-family: var(--font-mono); font-size: 11px; }
+    .steps .op { font-family: var(--font-mono); font-size: 12px; }
+    .steps .said { color: var(--ash); text-align: right; }
+    .steps li.err .said { color: var(--bad); }
+    .steps li.write .op { color: var(--violet); }
+    details { border-top: 1px solid var(--fog); margin-top: 14px; padding-top: 10px; }
+    summary { color: var(--violet); cursor: pointer; font-size: 13px; }
+    .attempt { background: var(--fog); border-radius: 10px; font-size: 13px; margin-top: 10px; padding: 10px 12px; }
+    .trace { color: var(--slate); font-size: 12px; margin-top: 16px; word-break: break-all; }
+    .copybtn { appearance: none; background: none; border: 1px solid var(--mist); border-radius: 100px; cursor: pointer; font-size: 11px; margin-left: 6px; padding: 2px 8px; }
+
+    .tax { display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr); }
+    .tax ul { list-style: none; margin: 0; padding: 0; }
+    .tax li { border-top: 1px solid var(--fog); display: flex; font-size: 13px; gap: 12px; justify-content: space-between; padding: 8px 0; }
+    .tax li b { font-family: var(--font-mono); font-weight: 400; }
+    .empty { color: var(--mint-ink); font-size: 14px; }
+
+    footer { color: var(--slate); font-size: 13px; margin: 0 auto; max-width: var(--max); padding: 0 16px 48px; }
+    @media (max-width: 960px) { .stats, .grid4 { grid-template-columns: 1fr 1fr; } .grid3, .tax { grid-template-columns: 1fr; } }
+    @media (max-width: 760px) {
       .nav { align-items: flex-start; flex-direction: column; }
-      .sheets { grid-template-columns: 1fr; }
-      .sparkle { display: none; }
+      .sides, .stats, .grid4 { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -139,248 +147,205 @@
     <nav class="nav">
       <div class="logo"><span class="rings" aria-hidden="true"></span>Receipts</div>
       <div class="nav-links">
+        <a href="#numbers">Numbers</a>
         <a href="#rules">Rules</a>
-        <a href="#how">How it works</a>
+        <a href="#taxonomy">What broke</a>
         <a href="#plan">Plan</a>
-        <a class="pill" href="#desk">Open a case</a>
+        <a href="https://github.com/Demiladepy/receipts">Code</a>
+        <a class="pill" href="#cases">Open a case</a>
       </div>
     </nav>
   </div>
-  <div class="stripe" aria-hidden="true"><span class="mint"></span><span class="violet"></span><span class="ink"></span></div>
   <main class="page">
+    <div class="stripe" aria-hidden="true"><span class="m"></span><span class="v"></span><span class="k"></span></div>
+
     <section class="intro">
-      <span class="sparkle a" aria-hidden="true"></span>
-      <span class="sparkle b" aria-hidden="true"></span>
-      <span class="sparkle c" aria-hidden="true"></span>
-      <p class="eyebrow">Debited, not credited</p>
+      <p class="eyebrow">Debited, not credited · #neatHack</p>
       <h1>It doesn't say done until it can prove it.</h1>
-      <p class="lead">A customer says the money left their account and never arrived. Receipts reads the sender bank, the switch, and the beneficiary bank separately, then refuses to send any sentence it cannot point at a trace.</p>
-      <a class="pill" href="#desk">Open a case</a>
+      <p class="lead">A customer says the money left their account and never arrived. Receipts asks the sender bank, the switch and the beneficiary bank separately, and every sentence it sends cites the tool call that proves it. The citation is the call's neatlogs span id. A deterministic verifier blocks anything it cannot prove, and the agent cannot move money on evidence it does not hold.</p>
+      <div class="stats" id="stats" aria-live="polite"></div>
     </section>
 
-    <section class="section" id="rules">
+    <section id="cases">
+      <p class="eyebrow">Recorded runs, not a mock-up</p>
+      <h2>Open a case.</h2>
+      <p class="copy">30 complaints under stress chaos: first calls time out, reversals report success and never post, the first switch read is stale. Each version ran every case three times on gpt-4.1-mini. These are those runs, with their trace ids. A red dot marks a case where v1 sent something false in at least one of its three runs.</p>
+      <div class="seeds" id="seeds" role="group" aria-label="Case"></div>
+      <div class="controls">
+        <span>Run <span class="seg" id="reps" role="group" aria-label="Repeat"></span></span>
+        <span>Compare <span class="seg" id="pair" role="group" aria-label="Versions"></span></span>
+      </div>
+      <div id="case"><p class="copy">Loading the case file…</p></div>
+    </section>
+
+    <section id="numbers">
+      <p class="eyebrow">Same 30 seeds, three runs each</p>
+      <h2>v1 → v2 → v3.</h2>
+      <p class="copy"><b>v1</b> sends what the model writes. <b>v2</b> gates the reply: every claim must match a fresh receipt from an authoritative source. Its traces showed a new failure: honest words, bolder actions. <b>v3</b> gates the action too, so a reversal needs receipts. Truth comes from the simulator's hidden facts, not from our own verifier.</p>
+      <div class="tablewrap"><table id="metrics"></table></div>
+    </section>
+
+    <section id="rules">
       <p class="eyebrow">The desk</p>
-      <h2>Four rules.</h2>
-      <p class="section-copy">The reply is a support answer. The verifier is the part that can stop it.</p>
-      <div class="rules">
-        <article class="rule">
-          <p class="num">01</p>
-          <h3>Every claim needs a receipt.</h3>
-          <p>Each fact in the outgoing reply has to match a tool span. If it does not, the send is blocked.</p>
-        </article>
-        <article class="rule">
-          <p class="num">02</p>
-          <h3>Receipts expire.</h3>
-          <p>A balance or debit claim counts only when that read happened after the last action that could have changed it.</p>
-        </article>
-        <article class="rule">
-          <p class="num">03</p>
-          <h3>Sources can disagree.</h3>
-          <p>The sender ledger, the switch, and the beneficiary bank are asked separately. A conflict is escalated, not smoothed over.</p>
-        </article>
-        <article class="rule">
-          <p class="num">04</p>
-          <h3>Ask once, then it is policy.</h3>
-          <p>A new kind of case goes to a person. The decision comes back as a committed rule and a test.</p>
-        </article>
+      <h2>Four rules, enforced in code.</h2>
+      <div class="grid4">
+        <article class="card"><p class="num">01</p><h3>Every claim needs a receipt.</h3><p>A reply is a list of claims from a fixed vocabulary. Each cites a receipt id, the neatlogs span of the tool call. The verifier checks the payload says it.</p></article>
+        <article class="card"><p class="num">02</p><h3>Receipts expire.</h3><p>A claim about the debit, reversal or balance must cite a read made after the last write. "Pending" must be confirmed by a second switch read.</p></article>
+        <article class="card"><p class="num">03</p><h3>Sources have authority.</h3><p>The ledger owns the debit, the switch owns the instruction, the beneficiary bank owns the credit. A write's acknowledgement owns nothing.</p></article>
+        <article class="card"><p class="num">04</p><h3>Ask once, then it is policy.</h3><p>A conflict escalates with an evidence pack. A human decides; Claude Code commits the rule and a test; Entire records it. The next case cites the rule.</p></article>
       </div>
     </section>
 
-    <div class="stripe" aria-hidden="true"><span class="mint"></span><span class="violet"></span><span class="ink"></span></div>
-
-    <section class="section" id="how">
-      <p class="eyebrow">One complaint</p>
-      <h2>How a reply leaves the desk.</h2>
-      <p class="section-copy">The banks here are simulated. The chaos is on purpose: a timeout, a dropped connection, a stale switch, or a reversal that says success and does not post.</p>
-      <div class="steps">
-        <article class="step">
-          <p class="num">Read</p>
-          <h3>Four records, in order.</h3>
-          <p>Sender debit, sender balance, switch status, beneficiary credit. A failed read is named. The missing fact is not invented.</p>
-        </article>
-        <article class="step">
-          <p class="num">v1</p>
-          <h3>Trust the tool, once.</h3>
-          <p>If the transfer failed and the debit is still open, v1 reverses once and trusts that response. It does not read the ledger again.</p>
-        </article>
-        <article class="step">
-          <p class="num">v2</p>
-          <h3>Prove it, or say it did not post.</h3>
-          <p>A reversal is posted only when a later debit read says so. If the tool reported success and the ledger is still open, that is the reply.</p>
-        </article>
-      </div>
+    <section id="taxonomy">
+      <p class="eyebrow">Read from the traces</p>
+      <h2>What broke, per version.</h2>
+      <p class="copy">Classified from the run records. Every fix commit in the repo cites the neatlogs trace that triggered it.</p>
+      <div class="tax" id="tax"></div>
     </section>
 
-    <section class="section">
-      <p class="eyebrow">What is on the desk</p>
-      <h2>Thirty complaints. One of them lies.</h2>
-      <div class="facts">
-        <article class="fact">
-          <p class="num">Seed 28</p>
-          <h3>The reversal reports success and the debit stays open.</h3>
-          <p>v1 says the reversal was processed. That claim is blocked, because a reversal report is not a ledger read. v2 says the debit is still open.</p>
-        </article>
-        <article class="fact">
-          <p class="num">23 of 30</p>
-          <h3>v1 can already send.</h3>
-          <p>Credited transfers, already-reversed debits, conflicts, amounts over the limit, and failed tools are proved by the spans they cite.</p>
-        </article>
-        <article class="fact">
-          <p class="num">30 of 30</p>
-          <h3>v2 sends with zero unproved claims.</h3>
-          <p>Seeds 9 to 14 keep the reversal sentence after a second ledger read. Seed 28 changes the sentence.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="section" id="plan">
+    <section id="plan">
       <p class="eyebrow">cfo.ai</p>
       <h2>What a proved reply costs.</h2>
-      <p class="section-copy">The plan is the cfo.ai model. Price, complaints per bank, new banks, churn, platform cost, and opening cash are assumptions. The proved share and the inference cost are measured on this agent: v2 allows 30 of 30, and a case does not call a model. Payroll is 0. Cash is counted in the same month. Currency is USD.</p>
-      <div class="facts">
-        <article class="fact">
-          <p class="num">Price</p>
-          <h3>$2 per proved reply.</h3>
-          <p>A planning price, not a contract. One bank is assumed to file 200 complaints a month. At that price, October revenue on the base plan is $400.</p>
-        </article>
-        <article class="fact">
-          <p class="num">Base</p>
-          <h3>Cash stays positive through December 2027.</h3>
-          <p>October 2026: 1 bank, $20 platform, $380 operating profit, $380 ending cash. December 2027: 15 banks, $6,000 revenue, $47,700 ending cash. Opening cash is an assumption of $0.</p>
-        </article>
-        <article class="fact">
-          <p class="num">Downside</p>
-          <h3>No bank, and the platform still costs $20.</h3>
-          <p>Revenue stays $0. Cash is −$20 in October 2026 and −$300 in December 2027. The upside, at $4 and 3 new banks a month, ends December 2027 at $575,700.</p>
-        </article>
-      </div>
-      <p class="section-copy"><a href="https://app.cfo.ai/s/p_AQHSpgYkMmI4ZTE2YjMtM2UwNi00NTk4LTkwNWEtNjhlY2QwOWNlYWFjDWRlZmF1bHRfbGF5ZXI">Open the model</a></p>
+      <p class="copy">Measured, not assumed: the v3 runs above cost <b id="cpc">…</b> per case in model tokens at gpt-4.1-mini list price. Pricing, volume and runway live in the cfo.ai model.</p>
+      <p class="copy"><a href="https://app.cfo.ai/s/p_AQHSpgYkMmI4ZTE2YjMtM2UwNi00NTk4LTkwNWEtNjhlY2QwOWNlYWFjDWRlZmF1bHRfbGF5ZXI">Open the model</a></p>
     </section>
-
-    <p class="index-label desk-label" id="desk">Cases</p>
-    <div id="case-index"></div>
-    <div id="file"><p class="status">Opening the case file…</p></div>
   </main>
-  <footer>Simulated sender ledger, switch, and beneficiary bank. Amounts are NGN. Both replies are shown. Only an allowed one would be sent.</footer>
+  <footer>Simulated sender ledger, switch and beneficiary bank; amounts in NGN. Chaos is derived from the seed, so every run is reproducible. <a href="https://github.com/Demiladepy/receipts/blob/main/hackathon.md">Build log and evidence</a>.</footer>
+
   <script>
-    const indexEl = document.getElementById("case-index");
-    const fileEl = document.getElementById("file");
-    let selected = 28;
+    const NAMES = { v1: "v1 · no gate", v2: "v2 · reply gate", v3: "v3 · reply + action gate" };
+    const state = { seed: 28, rep: 2, pair: ["v1", "v3"] };
+    const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const fmt = (n) => Number(n).toLocaleString("en-US");
 
-    function el(tag, className, text) {
-      const node = document.createElement(tag);
-      if (className) node.className = className;
-      if (text != null) node.textContent = text;
-      return node;
+    async function getJSON(url) {
+      const r = await fetch(url);
+      if (!r.ok) throw new Error(url + " → " + r.status);
+      return r.json();
     }
 
-    function stamp(allowed) {
-      return el("div", "stamp " + (allowed ? "allowed" : "blocked"), allowed ? "Allowed" : "Blocked");
+    function statTile(label, a, b, note, unit = "") {
+      return `<div class="stat"><p class="eyebrow">${label}</p><div class="big">${a}${unit}<span class="arrow">→</span>${b}${unit}</div><p>${note}</p></div>`;
     }
 
-    function sheet(title, side, note) {
-      const card = el("section", "sheet");
-      card.append(stamp(side.allowed));
-      card.append(el("h2", null, title));
-      if (note) card.append(el("p", "note", note));
-      card.append(el("p", "reply", side.reply));
-      const claims = el("ul", "claim");
-      side.claims.forEach((claim) => {
-        const item = el("li");
-        item.append(el("strong", claim.proved ? "proved" : "unproved", claim.proved ? "Proved" : "Unproved"));
-        item.append(document.createTextNode(" " + claim.statement));
-        const detail = claim.proved
-          ? claim.op + (claim.read_at ? " · " + claim.read_at : "")
-          : claim.reason;
-        item.append(el("div", "chaos", detail));
-        claims.append(item);
-      });
-      card.append(claims);
-      const table = document.createElement("table");
-      const head = document.createElement("tr");
-      ["When", "Tool", "Returned"].forEach((label) => head.append(el("th", null, label)));
-      table.append(head);
-      side.spans.forEach((span) => {
-        const row = document.createElement("tr");
-        row.append(el("td", null, span.read_at || "—"));
-        row.append(el("td", null, span.op));
-        row.append(el("td", null, span.ok ? span.summary : span.error));
-        table.append(row);
-      });
-      card.append(table);
-      const ledger = side.ledger_reversal_applied ? "yes" : "no";
-      card.append(el("p", "chaos", "Ledger reversal applied after this run: " + ledger));
-      return card;
+    function renderSummary({ metrics, taxonomy }) {
+      const v1 = metrics.v1, v2 = metrics.v2, v3 = metrics.v3;
+      document.getElementById("stats").innerHTML =
+        statTile("Resolved correctly", v1.resolved_correctly, `${v3.resolved_correctly}<small>/${v3.runs}</small>`, "v1 → v3, graded against hidden truth") +
+        statTile("False claims sent", v1.false_claims_sent, v3.false_claims_sent, "sentences customers received that were not true") +
+        statTile("Harmful reversals", v2.harmful_actions, v3.harmful_actions, "v2 → v3: honest words made bolder actions; the action gate fixed it") +
+        `<div class="stat"><p class="eyebrow">Cost per case</p><div class="big">$${v3.cost_usd_per_case.toFixed(4)}</div><p>v3, measured from token usage, ${v3.tool_calls_avg} tool calls on average</p></div>`;
+      document.getElementById("cpc").textContent = "$" + v3.cost_usd_per_case.toFixed(4);
+
+      const rows = [
+        ["resolved_correctly", "Resolved correctly", "up"],
+        ["false_claims_sent", "False claims sent", "down"],
+        ["unproven_claims_sent", "Unproven claims sent", "down"],
+        ["harmful_actions", "Harmful reversals", "down"],
+        ["reversals_on_unconfirmed_evidence", "Reversals on unconfirmed evidence", "down"],
+        ["debits_left_open_silently", "Debits left open without telling anyone", "down"],
+        ["replies_blocked_then_fixed", "Replies blocked, then fixed by the agent", ""],
+        ["tool_calls_avg", "Tool calls per case", ""],
+        ["cost_usd_per_case", "Cost per case (USD)", ""],
+        ["latency_s_avg", "Seconds per case", ""],
+      ];
+      const vs = Object.keys(metrics);
+      let html = `<thead><tr><th>Metric, ${v1.runs} runs per version</th>${vs.map((v) => `<th class="n">${NAMES[v]}</th>`).join("")}</tr></thead><tbody>`;
+      for (const [k, label, dir] of rows) {
+        html += `<tr><td>${label}</td>` + vs.map((v) => {
+          const val = metrics[v][k];
+          let cls = "";
+          if (dir === "down") cls = val === 0 ? "good" : "badn";
+          if (dir === "up") cls = val === metrics[v].runs ? "good" : "";
+          return `<td class="n ${cls}">${k.startsWith("cost") ? "$" + val.toFixed(4) : fmt(val)}</td>`;
+        }).join("") + `</tr>`;
+      }
+      document.getElementById("metrics").innerHTML = html + "</tbody>";
+
+      document.getElementById("tax").innerHTML = Object.entries(taxonomy).map(([v, items]) =>
+        `<div class="card"><p class="num">${NAMES[v]}</p>` +
+        (items.length ? `<ul>${items.map((i) => `<li><span>${esc(i.label)}</span><b>${i.runs}</b></li>`).join("")}</ul>`
+                      : `<p class="empty">Nothing. 0 failures in ${metrics[v].runs} runs.</p>`) + `</div>`).join("");
     }
 
-    function renderFile(data) {
-      document.title = data.complaint_id + " · Receipts";
-      fileEl.replaceChildren();
-      const hero = el("section", "hero");
-      hero.append(el("p", "eyebrow", data.complaint_id + " · " + data.pattern.replaceAll("_", " ")));
-      hero.append(el("h2", "case-name", data.customer_name));
-      const meta = el("div", "meta");
-      [data.transfer_id, data.amount, data.sender_bank + " → " + data.beneficiary_bank, data.complained_at].forEach((bit) => {
-        meta.append(el("span", null, bit));
-      });
-      hero.append(meta);
-      hero.append(el("p", "complaint", data.narrative));
-      hero.append(el("p", "chaos", "Chaos: " + data.chaos.join(", ")));
-      fileEl.append(hero);
-      const sheets = el("div", "sheets");
-      sheets.append(sheet("v1 would send", data.v1));
-      let note = "v2 reads the ledger again before it sends.";
-      if (data.v1.allowed) note = "The receipts already held, so v2 sends the same reply.";
-      else if (data.v1.reply === data.v2.reply) note = "v2 reads the ledger again. The sentence stays. The later debit read is the receipt.";
-      sheets.append(sheet("v2 sends", data.v2, note));
-      fileEl.append(sheets);
+    function renderSeeds(flags) {
+      const box = document.getElementById("seeds");
+      box.innerHTML = Array.from({ length: 30 }, (_, i) => i + 1).map((s) =>
+        `<button type="button" data-seed="${s}" class="${flags.has(s) ? "flag" : ""}" aria-pressed="${s === state.seed}">${String(s).padStart(2, "0")}</button>`).join("");
+      box.onclick = (e) => { const b = e.target.closest("button"); if (b) { state.seed = +b.dataset.seed; sync(); } };
+      const reps = document.getElementById("reps");
+      reps.innerHTML = [1, 2, 3].map((r) => `<button type="button" data-rep="${r}" aria-pressed="${r === state.rep}">${r}</button>`).join("");
+      reps.onclick = (e) => { const b = e.target.closest("button"); if (b) { state.rep = +b.dataset.rep; sync(); } };
+      const pair = document.getElementById("pair");
+      const pairs = [["v1", "v3"], ["v1", "v2"], ["v2", "v3"]];
+      pair.innerHTML = pairs.map((p) => `<button type="button" data-pair="${p.join(",")}" aria-pressed="${p.join() === state.pair.join()}">${p.join(" vs ")}</button>`).join("");
+      pair.onclick = (e) => { const b = e.target.closest("button"); if (b) { state.pair = b.dataset.pair.split(","); sync(); } };
     }
 
-    async function openCase(seed) {
-      selected = seed;
-      [...indexEl.children].forEach((button) => {
-        const pressed = Number(button.dataset.seed) === seed;
-        button.setAttribute("aria-pressed", String(pressed));
-        if (pressed) {
-          const left = button.offsetLeft - (indexEl.clientWidth - button.offsetWidth) / 2;
-          indexEl.scrollTo({ left: Math.max(0, left) });
-        }
-      });
-      fileEl.replaceChildren(el("p", "status", "Reading case " + String(seed).padStart(3, "0") + "…"));
+    function sync() {
+      document.querySelectorAll("#seeds button").forEach((b) => b.setAttribute("aria-pressed", +b.dataset.seed === state.seed));
+      document.querySelectorAll("#reps button").forEach((b) => b.setAttribute("aria-pressed", +b.dataset.rep === state.rep));
+      document.querySelectorAll("#pair button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.pair === state.pair.join()));
+      loadCase();
+    }
+
+    function side(v, run) {
+      if (!run) return `<div class="side"><h3>${NAMES[v]}</h3><p class="copy">No recorded run.</p></div>`;
+      const a = run.audit;
+      const good = a.resolved_correctly;
+      const badge = good ? `<span class="badge ok">correct</span>` : run.status === "withheld" ? `<span class="badge neutral">withheld, escalated</span>` : `<span class="badge bad">wrong</span>`;
+      const last = run.attempts[run.attempts.length - 1];
+      const claims = last ? last.claims.map((c) => `<li><span class="dot ${c.proved ? "y" : "n"}"></span><span>${esc(c.text)}</span>
+          <span class="meta">${esc(c.assertion)}${c.value !== null && c.value !== undefined ? " = " + esc(c.value) : ""} · receipt <code>${esc(c.receipt_id)}</code>${c.op ? ` · #${c.seq} ${esc(c.op)}` : ""}</span>
+          ${c.reason ? `<span class="why">${v === "v1" ? "would be blocked: " : ""}${esc(c.reason)}</span>` : ""}</li>`).join("") : "";
+      const steps = run.steps.map((s) => `<li class="${s.ok ? "" : "err"} ${s.op === "sender.reverse" ? "write" : ""}"><span class="seq">#${s.seq}</span><span class="op">${esc(s.op)}</span><span class="said">${esc(s.said)}</span></li>`).join("");
+      const blocked = run.attempts.filter((t) => !t.allowed);
+      const attempts = (v !== "v1" && blocked.length) ? `<details><summary>${blocked.length} blocked attempt${blocked.length > 1 ? "s" : ""} before this reply</summary>${blocked.map((t, i) =>
+        `<div class="attempt"><b>Attempt ${i + 1}</b><br>${t.claims.filter((c) => !c.proved).map((c) => `✗ ${esc(c.assertion)}: ${esc(c.reason)}`).join("<br>")}${t.next_step_reason ? `<br>✗ next step: ${esc(t.next_step_reason)}` : ""}</div>`).join("")}</details>` : "";
+      return `<div class="side">
+        <header><h3>${NAMES[v]}</h3>${badge}</header>
+        <p class="label">What the customer got</p>
+        ${run.message ? `<p class="reply">${esc(run.message)}</p>` : `<p class="reply none">Nothing sent. The reply could not be proved, so the case went to a human with its receipts.</p>`}
+        ${run.failures.length ? `<ul class="failures">${run.failures.map((f) => `<li>${esc(f)}</li>`).join("")}</ul>` : ""}
+        <p class="label">Claims and their receipts</p>
+        <ul class="claims">${claims}</ul>
+        ${attempts}
+        <p class="label">Tool calls (each is a neatlogs span)</p>
+        <ol class="steps">${steps}</ol>
+        <p class="trace">neatlogs trace <code>${esc(run.trace_id)}</code><button class="copybtn" type="button" data-copy="${esc(run.trace_id)}">copy</button> · $${run.cost_usd.toFixed(4)}</p>
+      </div>`;
+    }
+
+    async function loadCase() {
+      const box = document.getElementById("case");
       try {
-        const response = await fetch("/api/cases/" + seed);
-        if (!response.ok) throw new Error("Case " + seed + " returned " + response.status);
-        renderFile(await response.json());
-      } catch (error) {
-        fileEl.replaceChildren(el("p", "error", error.message));
+        const c = await getJSON(`/api/runs/${state.seed}?rep=${state.rep}`);
+        const t = c.truth;
+        box.innerHTML = `<div class="complaint"><div class="who">${esc(c.complaint_id)} · ${esc(c.customer_name)} · ${esc(c.amount)}</div>${esc(c.narrative)}
+          <div class="chips"><span class="chip truth">hidden truth: switch ${esc(t.switch)}, beneficiary ${t.credited ? "credited" : "not credited"}${t.already_reversed ? ", already reversed" : ""}</span>
+          ${c.chaos.map((x) => `<span class="chip chaos">${esc(x)}</span>`).join("")}</div></div>
+          <div class="sides">${state.pair.map((v) => side(v, c.runs[v])).join("")}</div>`;
+      } catch (e) {
+        box.innerHTML = `<p class="copy">Could not load this case (${esc(e.message)}).</p>`;
       }
     }
 
-    async function boot() {
-      try {
-        const response = await fetch("/api/scenarios");
-        if (!response.ok) throw new Error("The case index returned " + response.status);
-        const rows = await response.json();
-        rows.forEach((row) => {
-          const button = document.createElement("button");
-          button.type = "button";
-          button.dataset.seed = String(row.seed);
-          button.setAttribute("aria-pressed", "false");
-          button.append(el("span", null, row.complaint_id));
-          const name = el("span");
-          name.append(document.createTextNode(row.customer_name));
-          name.append(el("small", null, row.chaos[0] === "none" ? row.pattern.replaceAll("_", " ") : row.chaos[0]));
-          button.append(name);
-          button.addEventListener("click", () => openCase(row.seed));
-          indexEl.append(button);
-        });
-        await openCase(selected);
-      } catch (error) {
-        fileEl.replaceChildren(el("p", "error", error.message));
-      }
-    }
+    document.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-copy]");
+      if (b) { navigator.clipboard?.writeText(b.dataset.copy); b.textContent = "copied"; setTimeout(() => (b.textContent = "copy"), 1200); }
+    });
 
-    boot();
+    (async () => {
+      try {
+        const summary = await getJSON("/api/runs/summary");
+        renderSummary(summary);
+        renderSeeds(new Set(summary.flagged));
+      } catch (e) {
+        document.getElementById("stats").innerHTML = `<p class="copy">Could not load the run summary (${esc(e.message)}).</p>`;
+        renderSeeds(new Set());
+      }
+      loadCase();
+    })();
   </script>
 </body>
 </html>
