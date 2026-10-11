@@ -68,7 +68,7 @@ def setup() -> dict:
     product_id = product.product_id
     print(f"product: {product_id} at {PRICE_CENTS} cents per proved resolution")
 
-    email = "disputes@harborbank.test"
+    email = "harbor-bank-disputes@mailinator.com"
     customer = _find(dodo.customers.list(email=email), email=email) or dodo.customers.create(
         email=email, name="Harbor Bank (test customer)")
     print(f"customer: {customer.customer_id}")
@@ -117,7 +117,7 @@ def main() -> None:
     inv = sub.add_parser("invoice")
     inv.add_argument("statement", type=Path)
     inv.add_argument("--provider", choices=["bachs", "paystack"], default="bachs")
-    inv.add_argument("--email", default="disputes@harborbank.test")
+    inv.add_argument("--email", default="harbor-bank-disputes@mailinator.com")
     inv.add_argument("--name", default="Harbor Bank")
     args = parser.parse_args()
     if args.cmd == "statement":

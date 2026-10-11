@@ -64,6 +64,16 @@ python -m policy.ask_once decide ESC-0021 --by "you" --decision "..."         # 
 python -m policy.ask_once replay --seed 22                                    # the next case cites the rule
 ```
 
+## Demo walkthrough
+
+```bash
+python -m demo case 28 --version v1 --recorded 3   # the recorded v1 run that lied
+python -m demo case 28 --version v3                # v3 live, a new neatlogs trace
+python -m demo numbers                             # v1 -> v2 -> v3 -> v3 + rules
+python -m demo rules                               # committed rules and their licenses
+python -m demo bill                                # usage statement and the Bachs checkout
+```
+
 ## Layout
 
 | Path | What |
