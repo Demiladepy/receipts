@@ -1,0 +1,25 @@
+Index: cache-miss (1046ms) | Query: 1ms | Total: 1048ms
+Impact: verify_reply (verifier/assertions.py:137) def=137 span=137-148 [function]
+Blast radius: 2 callers (1 direct, 1 transitive), 3 callees, 6 type consumers, 3 data flows, 1 co-change file, 0 siblings.
+Callers (1 direct, 1 transitive; who breaks if behavior changes):
+- Case.reply (agent/llm_agent.py:179, def :176)
+- _loop (agent/llm_agent.py:300, def :265) [via Case.reply]
+Callees (3; what it depends on):
+- ReplyVerdict (verifier/assertions.py:117) [CONSTRUCTS]
+- check_claim (verifier/assertions.py:151)
+- _guard_next_step (verifier/assertions.py:215)
+Type consumers (0 in, 6 out; USES_TYPE/PARAM_TYPE/RETURNS_TYPE):
+- -> ReceiptBook (agent/receipts.py:45) [PARAM_TYPE]
+- -> ReceiptBook (agent/receipts.py:45) [USES_TYPE]
+- -> Claim (verifier/assertions.py:86) [PARAM_TYPE]
+- -> Claim (verifier/assertions.py:86) [USES_TYPE]
+- -> ReplyVerdict (verifier/assertions.py:117) [RETURNS_TYPE]
+- -> ReplyVerdict (verifier/assertions.py:117) [USES_TYPE]
+Data flows (1 in, 2 out):
+- <- ReplyVerdict (verifier/assertions.py:117)
+- -> check_claim (verifier/assertions.py:151)
+- -> _guard_next_step (verifier/assertions.py:215)
+Co-change coupling (1; files that historically change with verifier/assertions.py):
+- policy/store.py [files changed together in 2 recent commits]
+Same-container siblings (0):
+- none

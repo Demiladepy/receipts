@@ -1,0 +1,20 @@
+Index: cache-miss (1691ms) | Query: 1ms | Total: 1693ms
+Impact: conditions_hold (policy/store.py:64) def=64 span=64-80 [function]
+Blast radius: 3 callers (2 direct, 1 transitive), 0 callees, 0 type consumers, 1 data flow, 4 co-change files, 0 siblings.
+Callers (2 direct, 1 transitive; who breaks if behavior changes):
+- lookup (policy/store.py:44, def :34)
+- check_claim (verifier/assertions.py:178, def :151)
+- verify_reply (verifier/assertions.py:141, def :137) [+1 more call site, via check_claim]
+Callees (0; what it depends on):
+- none
+Type consumers (0 in, 0 out; USES_TYPE/PARAM_TYPE/RETURNS_TYPE):
+- none
+Data flows (1 in, 0 out):
+- <- lookup (policy/store.py:34)
+Co-change coupling (4; files that historically change with policy/store.py):
+- agent/bench.py [files changed together in 2 recent commits]
+- agent/llm_agent.py [files changed together in 2 recent commits]
+- policy/ask_once.py [files changed together in 2 recent commits]
+- verifier/assertions.py [files changed together in 2 recent commits]
+Same-container siblings (0):
+- none

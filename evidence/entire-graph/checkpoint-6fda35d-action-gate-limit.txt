@@ -1,0 +1,14 @@
+Semantic changes d4af7c2865ca414750c5ebb542e34c6f3f2409ed..6fda35d3acbfafbadf6963e23c9e1cfe0ef5a24c
+
+agent/bench.py (Python)
+  ~ function run signature changed (8 dependents)
+  ~ function one signature changed (2 dependents)
+  ~ function _line body changed (2 dependents)
+  ~ function main body changed (1 dependent)
+
+agent/llm_agent.py (Python)
+  ~ function reversal_refusal body changed (3 dependents)
+
+tests/test_llm_agent.py (Python)
+  + function test_v3_guard_refuses_over_the_limit_even_when_the_transfer_failed added
+

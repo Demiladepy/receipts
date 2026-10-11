@@ -5,9 +5,9 @@ Drafts. Numbers are from `runs/*-stress-x3.jsonl` (30 seeds × 3 runs per versio
 ## Post 2: "My agent lied" (thread)
 
 **1/**
-Day 2 of #neatHack. My agent lied to a customer.
+My agent told a customer their ₦30,000 had been refunded. It hadn't.
 
-₦30,000 debited, never credited. The agent called the reversal tool, got back "reversed", and wrote: "We have reversed the debit on your account."
+Day 2 of #neatHack. The agent called the reversal tool, got back "reversed", and wrote: "We have reversed the debit on your account."
 
 The ledger never posted it. The @neatlogs trace shows why: no read after the write.
 
@@ -38,7 +38,9 @@ harmful reversals 3 → 11 → 0
 $0.0047 per case
 
 **5/**
-Every fix commit cites the trace that triggered it, and @EntireHQ checkpoints the session behind it. @arithecfo gets the real cost per case next.
+Not a trust score for the agent. A receipt for every sentence.
+
+Every fix commit cites the trace that triggered it, and @EntireHQ checkpoints the session behind it. Billing runs on @dodopayments: a bank pays only for replies the verifier proved, and each invoice line carries its trace id.
 
 Try a case: https://receipts-tau-liard.vercel.app
 Code: https://github.com/Demiladepy/receipts

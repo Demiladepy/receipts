@@ -1,0 +1,26 @@
+Semantic changes b5382b0def2d07c5a613cbaecd343b6e167db06f..255f3df6dc1c9baeb948c338727f0d1e41cd19b5
+
+policy/rules/switch-failed-but-credited-v1.json (JSON)
+  + section rule_id added
+  + section case_type added
+  + section decision added
+  + section instructions added
+  + section customer_line added
+  + section conditions added
+  + section decided_by added
+  + section decided_at added
+  + section source_case added
+  + section escalation_id added
+  + section seed added
+  + section trace_id added
+
+tests/policy/__init__.py (Python)
+  + module tests/policy/__init__.py added
+
+tests/policy/test_switch-failed-but-credited-v1.py (Python)
+  + function load_json added
+  + function test_rule_loads added
+  + function test_lookup_returns_rule added
+  + function test_conditions_hold_on_pack_receipts added
+  + function test_conditions_fail_when_beneficiary_not_credited added
+
