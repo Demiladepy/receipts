@@ -30,26 +30,30 @@ def parse_seeds(text: str) -> list[int]:
     return seeds
 
 
-def run(version: str, profile: str, seeds: list[int], workers: int, out: Path) -> list[dict]:
+def run(version: str, profile: str, seeds: list[int], workers: int, out: Path,
+        repeats: int = 1) -> list[dict]:
     from agent.llm import make_client
     from agent.llm_agent import run_case
 
     init_tracing(tags=[f"prompt:{version}", f"chaos:{profile}"])
     client = make_client()
     scenarios = [s for s in load_scenarios() if s.seed in seeds]
+    jobs = [(scenario, rep) for rep in range(1, repeats + 1) for scenario in scenarios]
 
-    def one(scenario):
+    def one(job):
+        scenario, rep = job
         chaos = stress_flags(scenario) if profile == "stress" else None
         try:
             record = run_case(scenario, version, chaos=chaos, client=client)
         except Exception as exc:  # a crashed run is a result too
             record = {"seed": scenario.seed, "version": version, "status": "crashed", "error": repr(exc)}
         record["profile"] = profile
+        record["rep"] = rep
         print(_line(record), flush=True)
         return record
 
     with ThreadPoolExecutor(max_workers=workers) as pool:
-        records = sorted(pool.map(one, scenarios), key=lambda r: r["seed"])
+        records = sorted(pool.map(one, jobs), key=lambda r: (r["rep"], r["seed"]))
     neatlogs.flush()
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text("".join(json.dumps(r) + "\n" for r in records), encoding="utf-8")
@@ -60,6 +64,7 @@ def run(version: str, profile: str, seeds: list[int], workers: int, out: Path) -
 def _line(r: dict) -> str:
     if r.get("status") == "crashed":
         return f"seed={r['seed']:02d} CRASHED {r.get('error')}"
+    tag = f"r{r.get('rep', 1)} "
     a = r["audit"]
     flags = []
     if a["false_claims"]:
@@ -73,7 +78,7 @@ def _line(r: dict) -> str:
     if r["blocks"]:
         flags.append(f"blocked x{r['blocks']}")
     ok = "ok " if a["resolved_correctly"] else "BAD"
-    return (f"seed={r['seed']:02d} {ok} {r['status']:<8} expected={a['expected']:<8} "
+    return (f"{tag}seed={r['seed']:02d} {ok} {r['status']:<8} expected={a['expected']:<8} "
             f"tools={len(r['tool_order'])} ${r['usage']['cost_usd']:.4f} {' '.join(flags)}")
 
 
@@ -122,13 +127,15 @@ def main() -> None:
     r.add_argument("--profile", choices=["catalog", "stress"], default="stress")
     r.add_argument("--seeds", default="1-30")
     r.add_argument("--workers", type=int, default=4)
+    r.add_argument("--repeats", type=int, default=1)
     r.add_argument("--out", type=Path)
     s = sub.add_parser("summary")
     s.add_argument("paths", nargs="+", type=Path)
     args = parser.parse_args()
     if args.cmd == "run":
-        out = args.out or RUNS / f"{args.version}-{args.profile}.jsonl"
-        run(args.version, args.profile, parse_seeds(args.seeds), args.workers, out)
+        suffix = f"-x{args.repeats}" if args.repeats > 1 else ""
+        out = args.out or RUNS / f"{args.version}-{args.profile}{suffix}.jsonl"
+        run(args.version, args.profile, parse_seeds(args.seeds), args.workers, out, args.repeats)
     else:
         print(summary(args.paths))
 

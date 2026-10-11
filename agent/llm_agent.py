@@ -18,6 +18,7 @@ from agent.llm_prompts import system_prompt
 from agent.receipts import ReceiptBook, current_trace_id
 from agent.truth import audit
 from policy import store
+from sim.constants import ESCALATION_LIMIT_KOBO
 from sim.errors import SimError
 from sim.models import ChaosFlags, Scenario
 from sim.world import World, open_world
@@ -217,6 +218,9 @@ def reversal_refusal(book: ReceiptBook) -> str | None:
     credit = latest.get("beneficiary.get_credit")
     if debit is not None and (not debit.get("debited") or debit.get("reversal_applied")):
         return "the ledger does not show an open debit to reverse"
+    amounts = [v.get("amount_kobo") for v in (debit, switch, credit) if v and v.get("amount_kobo")]
+    if any(a > ESCALATION_LIMIT_KOBO for a in amounts):
+        return "the amount is over the NGN 1,000,000.00 limit; a human decides. Escalate"
     if switch is not None and switch.get("status") != "failed":
         return (f"the switch says {switch.get('status')}, not failed. Only a failed transfer with "
                 "no credit is reversed; anything else is escalated")

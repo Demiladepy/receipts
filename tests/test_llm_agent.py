@@ -138,3 +138,14 @@ def test_pending_needs_a_second_switch_read():
     old = check_claim(Claim("switch_status", first.receipt_id, "It is pending.", "pending"), book)
     confirmed = check_claim(Claim("switch_status", second.receipt_id, "It is pending.", "pending"), book)
     assert not once.proved and not old.proved and confirmed.proved
+
+
+def test_v3_guard_refuses_over_the_limit_even_when_the_transfer_failed():
+    from agent.llm_agent import reversal_refusal
+
+    book = ReceiptBook()
+    big = 200_000_000
+    book.record("sender.get_debit", {}, True, {"debited": True, "reversal_applied": False, "amount_kobo": big}, None)
+    book.record("switch.get_status", {}, True, {"status": "failed", "amount_kobo": big}, None)
+    book.record("beneficiary.get_credit", {}, True, {"credited": False, "amount_kobo": None}, None)
+    assert "over the" in reversal_refusal(book)
