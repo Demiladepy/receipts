@@ -135,8 +135,12 @@ class ReplyVerdict:
 
 
 def verify_reply(claims: list[Claim], next_step: str, book: ReceiptBook) -> ReplyVerdict:
-    results = tuple(check_claim(claim, book) for claim in claims)
-    earned = frozenset().union(*(RULES[r.claim.assertion].may_say for r in results if r.proved))
+    # Pass 1: which claims hold on their receipts (ignoring wording). Their completion
+    # words are earned for the whole reply, so a policy sentence may say "credited"
+    # when a proved beneficiary receipt in the same reply says so.
+    structural = [check_claim(claim, book, check_text=False) for claim in claims]
+    earned = frozenset().union(*(RULES[r.claim.assertion].may_say for r in structural if r.proved))
+    results = tuple(check_claim(claim, book, earned=earned) for claim in claims)
     step_reason = _guard_next_step(next_step, earned)
     allowed = bool(results) and all(r.proved for r in results) and step_reason is None
     if not results:
@@ -144,7 +148,8 @@ def verify_reply(claims: list[Claim], next_step: str, book: ReceiptBook) -> Repl
     return ReplyVerdict(allowed, results, step_reason)
 
 
-def check_claim(claim: Claim, book: ReceiptBook) -> ClaimResult:
+def check_claim(claim: Claim, book: ReceiptBook, *, earned: frozenset[str] = frozenset(),
+                check_text: bool = True) -> ClaimResult:
     rule = RULES.get(claim.assertion)
     if rule is None:
         return ClaimResult(claim, False, f"unknown assertion {claim.assertion!r}")
@@ -156,7 +161,7 @@ def check_claim(claim: Claim, book: ReceiptBook) -> ClaimResult:
             return ClaimResult(claim, False, f"{receipt.op} did not fail")
         if claim.value not in (None, receipt.error):
             return ClaimResult(claim, False, f"{receipt.op} failed with {receipt.error}, not {claim.value}")
-        return _text_checked(claim, rule)
+        return _text_checked(claim, rule, earned, check_text)
     if receipt.op not in rule.ops:
         allowed = ", ".join(rule.ops)
         hint = " A write tool's response is an acknowledgement, not proof of state." if receipt.is_write else ""
@@ -184,7 +189,7 @@ def check_claim(claim: Claim, book: ReceiptBook) -> ClaimResult:
         if last_write and receipt.seq < last_write:
             return ClaimResult(claim, False, f"stale: this read (#{receipt.seq}) happened before the "
                                              f"write at #{last_write}; read again")
-    return _text_checked(claim, rule)
+    return _text_checked(claim, rule, earned, check_text)
 
 
 def _switch_staleness(receipt: Receipt, value: object, book: ReceiptBook) -> str | None:
@@ -198,10 +203,12 @@ def _switch_staleness(receipt: Receipt, value: object, book: ReceiptBook) -> str
     return None
 
 
-def _text_checked(claim: Claim, rule: Rule) -> ClaimResult:
-    word = _unearned_word(claim.text, rule.may_say)
+def _text_checked(claim: Claim, rule: Rule, earned: frozenset[str] = frozenset(),
+                  check_text: bool = True) -> ClaimResult:
+    word = _unearned_word(claim.text, rule.may_say | earned) if check_text else None
     if word:
-        return ClaimResult(claim, False, f"the sentence says {word!r}, which {claim.assertion} does not prove")
+        return ClaimResult(claim, False, f"the sentence says {word!r}, which neither {claim.assertion} "
+                                         "nor any other proved claim in this reply proves")
     return ClaimResult(claim, True, None)
 
 

@@ -149,3 +149,17 @@ def test_v3_guard_refuses_over_the_limit_even_when_the_transfer_failed():
     book.record("switch.get_status", {}, True, {"status": "failed", "amount_kobo": big}, None)
     book.record("beneficiary.get_credit", {}, True, {"credited": False, "amount_kobo": None}, None)
     assert "over the" in reversal_refusal(book)
+
+
+def test_a_policy_sentence_may_use_words_another_proved_claim_earned():
+    book = ReceiptBook()
+    credit = book.record("beneficiary.get_credit", {}, True, {"credited": True}, None)
+    rule = book.record("policy.lookup", {}, True, {"found": True, "rule_id": "agreed-credit-v1"}, None)
+    with_credit = verify_reply([
+        Claim("credited", credit.receipt_id, "Cedar Bank credited the account."),
+        Claim("policy", rule.receipt_id, "Under our policy this transfer is completed.", "agreed-credit-v1"),
+    ], "Please check with the recipient.", book)
+    alone = verify_reply([
+        Claim("policy", rule.receipt_id, "Under our policy this transfer is completed.", "agreed-credit-v1"),
+    ], "Please check with the recipient.", book)
+    assert with_credit.allowed and not alone.allowed
