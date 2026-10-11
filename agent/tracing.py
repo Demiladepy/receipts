@@ -1,6 +1,7 @@
 """neatlogs bootstrap. Import and call init_tracing() once at process start."""
 
 import os
+import sys
 from typing import Any
 
 import neatlogs
@@ -16,6 +17,9 @@ def init_tracing(
     register_shutdown_handlers: bool = True,
 ) -> None:
     load_dotenv()
+    if not os.environ.get("NEATLOGS_API_KEY") and not disable_export:
+        print("WARNING: NEATLOGS_API_KEY is empty; neatlogs export is disabled and no trace "
+              "will reach the app. Set it in .env.", file=sys.stderr)
     kwargs: dict[str, Any] = {
         "api_key": os.environ.get("NEATLOGS_API_KEY"),
         "workflow_name": workflow_name,
