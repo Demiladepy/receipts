@@ -184,7 +184,7 @@ def decide(escalation_id: str, decision: str, by: str, rule_id: str | None, dry_
         "Bash(git diff:*)", "Bash(mkdir:*)",
     ]
     print(f"Claude Code is writing rule {rule_id} from {escalation_id} ...", flush=True)
-    result = subprocess.run(cmd, cwd=ROOT)
+    result = subprocess.run(cmd, cwd=ROOT, stdin=subprocess.DEVNULL)
     sys.exit(result.returncode)
 
 
