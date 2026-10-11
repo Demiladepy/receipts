@@ -63,3 +63,18 @@ PROMPTS = {
 
 def system_prompt(version: str) -> str:
     return PROMPTS[version]
+
+
+def resolve_label(label: str) -> str:
+    """Which local version a neatlogs prompt label points at, e.g. "production" -> "v3".
+
+    The managed prompt in neatlogs is the source of truth for what is promoted; its
+    content must match a version in this file exactly, so a run is reproducible."""
+    import neatlogs
+
+    handle = neatlogs.get_prompt(NAME, label=label)
+    content = (handle.content or "").strip()
+    for version, text in PROMPTS.items():
+        if text.strip() == content:
+            return version
+    raise ValueError(f"neatlogs prompt {NAME}@{label} (version {handle.version}) matches no local version")

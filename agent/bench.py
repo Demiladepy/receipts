@@ -31,11 +31,12 @@ def parse_seeds(text: str) -> list[int]:
 
 
 def run(version: str, profile: str, seeds: list[int], workers: int, out: Path,
-        repeats: int = 1) -> list[dict]:
+        repeats: int = 1, *, traced: bool = False) -> list[dict]:
     from agent.llm import make_client
     from agent.llm_agent import run_case
 
-    init_tracing(tags=[f"prompt:{version}", f"chaos:{profile}"])
+    if not traced:
+        init_tracing(tags=[f"prompt:{version}", f"chaos:{profile}"])
     client = make_client()
     scenarios = [s for s in load_scenarios() if s.seed in seeds]
     jobs = [(scenario, rep) for rep in range(1, repeats + 1) for scenario in scenarios]
@@ -123,7 +124,8 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="cmd", required=True)
     r = sub.add_parser("run")
-    r.add_argument("--version", choices=["v1", "v2", "v3"], required=True)
+    r.add_argument("--version", required=True,
+                   help="v1 | v2 | v3, or a neatlogs prompt label such as production")
     r.add_argument("--profile", choices=["catalog", "stress"], default="stress")
     r.add_argument("--seeds", default="1-30")
     r.add_argument("--workers", type=int, default=4)
@@ -133,9 +135,18 @@ def main() -> None:
     s.add_argument("paths", nargs="+", type=Path)
     args = parser.parse_args()
     if args.cmd == "run":
+        if args.version not in ("v1", "v2", "v3"):
+            from agent.llm_prompts import resolve_label
+
+            label = args.version
+            init_tracing(tags=[f"prompt-label:{label}", f"chaos:{args.profile}"])
+            args.version = resolve_label(label)
+            args.traced = True
+            print(f"neatlogs label {label!r} -> prompt {args.version}")
         suffix = f"-x{args.repeats}" if args.repeats > 1 else ""
         out = args.out or RUNS / f"{args.version}-{args.profile}{suffix}.jsonl"
-        run(args.version, args.profile, parse_seeds(args.seeds), args.workers, out, args.repeats)
+        run(args.version, args.profile, parse_seeds(args.seeds), args.workers, out, args.repeats,
+            traced=getattr(args, "traced", False))
     else:
         print(summary(args.paths))
 
