@@ -119,6 +119,8 @@ def main() -> None:
     inv.add_argument("--provider", choices=["bachs", "paystack"], default="bachs")
     inv.add_argument("--email", default="harbor-bank-disputes@mailinator.com")
     inv.add_argument("--name", default="Harbor Bank")
+    inv.add_argument("--expires-minutes", type=int, help="Bachs: how long the checkout stays open")
+    inv.add_argument("--fresh", action="store_true", help="Bachs: open a new checkout instead of reusing one")
     args = parser.parse_args()
     if args.cmd == "statement":
         from billing.statement import build, naira, save
@@ -135,8 +137,10 @@ def main() -> None:
         if args.provider == "bachs":
             from billing import bachs
 
-            result = bachs.checkout(stmt, email=args.email, name=args.name)
-            print(f"Bachs checkout {result['checkout_id']} ({result['status']}): {result['checkout_url']}")
+            result = bachs.checkout(stmt, email=args.email, name=args.name,
+                                    expires_in_minutes=args.expires_minutes, fresh=args.fresh)
+            print(f"Bachs checkout {result['checkout_id']} ({result['status']}, expires {result['expires_at']}): "
+                  f"{result['checkout_url']}")
             print(f"statement sha256 {result['statement_sha256']}")
             return
         from billing import paystack

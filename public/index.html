@@ -347,7 +347,7 @@
           document.getElementById("policy-stats").innerHTML =
             statTile("Sent to a human", b.escalated_to_human, a.escalated_to_human, "of 90 runs, before and after two decisions") +
             statTile("Unnecessary escalations", b.unnecessary_escalations, a.unnecessary_escalations, "a person pulled in when every source answered") +
-            statTile("Billed resolutions", p.billed.v3, p.billed.v3p, "proved, no human: what a bank pays for (Dodo Payments)") +
+            statTile("Billed resolutions", p.billed.v3, p.billed.v3p, "proved, no human: what a bank pays for (collected through Bachs)") +
             statTile("False claims / harmful", `${b.false_claims_sent}/${b.harmful_actions}`, `${a.false_claims_sent}/${a.harmful_actions}`, "fewer humans, same safety");
         }
         document.getElementById("rules").innerHTML = p.rules.map((r) => `<article class="card">

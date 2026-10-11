@@ -4,8 +4,8 @@ Created Sun 11 Oct 2026 with `python -m billing invoice billing/statements/2026-
 
 | Field | Value |
 |---|---|
-| Checkout | `chk_nQSV66qKn8wfglUE` (status `open`, payment `requires_payment_method`) |
-| Checkout URL | https://sandbox-checkout.bachs.io/c/40xe4PEO4F8sZa8 |
+| Checkout | `chk_6uFmF6o3qQ59y18l` (status `open`, expires 2026-10-12 19:21 UTC; Bachs caps a checkout at 24 h). First checkout `chk_nQSV66qKn8wfglUE` expired. |
+| Checkout URL | https://sandbox-checkout.bachs.io/c/PjrX4QELSnuTrg4 |
 | Product | `prod_95d01043db9a42e88b53`, "Receipts: proved resolution", NGN 2,000.00 per unit |
 | Line item | 51 × NGN 2,000.00 = **NGN 102,000.00** |
 | Reference | `receipts-2026-10-1a8d7c46e04c` |

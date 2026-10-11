@@ -13,6 +13,7 @@ refused unless RECEIPTS_ALLOW_LIVE_BILLING=1.
 import hashlib
 import json
 import os
+from datetime import datetime, timezone
 
 from billing.dodo import CONFIG_PATH
 
@@ -79,7 +80,8 @@ def _customer_id(bachs, email: str, name: str) -> str:
                                            metadata={"source": "receipts"}).customer_id
 
 
-def checkout(statement: dict, *, email: str, name: str, bachs=None) -> dict:
+def checkout(statement: dict, *, email: str, name: str, bachs=None, expires_in_minutes: int | None = None,
+             fresh: bool = False) -> dict:
     if statement["proved_resolutions"] == 0:
         raise SystemExit("Nothing to collect: no proved resolutions in this statement.")
     bachs = bachs or client()
@@ -89,7 +91,8 @@ def checkout(statement: dict, *, email: str, name: str, bachs=None) -> dict:
         customer={"customer_id": _customer_id(bachs, email, name)},
         billing_currency="NGN",
         product_cart=[{"product_id": product_id, "quantity": statement["proved_resolutions"]}],
-        reference=f"receipts-{statement['period']}-{digest[:12]}",
+        reference=f"receipts-{statement['period']}-{digest[:12]}"
+                  + (f"-{datetime.now(timezone.utc):%Y%m%d%H%M%S}" if fresh else ""),
         metadata={
             "period": statement["period"],
             "proved_resolutions": statement["proved_resolutions"],
@@ -97,7 +100,8 @@ def checkout(statement: dict, *, email: str, name: str, bachs=None) -> dict:
             "statement_sha256": digest,
             "first_traces": ",".join(l["neatlogs_trace_id"] or "" for l in statement["lines"][:5]),
         },
-        idempotency_key=f"receipts-{statement['period']}-{digest[:24]}",
+        idempotency_key=None if fresh else f"receipts-{statement['period']}-{digest[:24]}",
+        **({"expires_in_minutes": expires_in_minutes} if expires_in_minutes else {}),
     )
     return {"checkout_id": session.checkout_id, "checkout_url": session.checkout_url,
-            "status": session.status, "statement_sha256": digest}
+            "status": session.status, "expires_at": getattr(session, "expires_at", None), "statement_sha256": digest}

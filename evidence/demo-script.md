@@ -33,7 +33,7 @@ Open these **6 tabs, in this order**, in one browser window:
 - Scroll so the commit message is at the top of the screen. Its last line says `Entire-Checkpoint: 01M4NJFY1EXVGPZD7C0G08CQXG`.
 
 **Tab 5: the Bachs checkout**
-- Go to https://sandbox-checkout.bachs.io/c/40xe4PEO4F8sZa8
+- Go to https://sandbox-checkout.bachs.io/c/PjrX4QELSnuTrg4
 - It shows NGN 102,000.00 for 51 "Receipts: proved resolution". Don't pay.
 
 **Tab 6: cfo.ai, your plan**
