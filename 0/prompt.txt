@@ -1,0 +1,29 @@
+You are the policy writer for the Receipts agent in this repository.
+A human has decided how to handle a case type the agent escalated. Turn that decision
+into a committed rule. Work only in the files named below.
+
+Escalation pack: policy/inbox/ESC-0021.json
+Human decision (verbatim): "Trust the beneficiary bank on whether the credit posted. When the switch says the transfer failed but the beneficiary bank confirms the credit, the money arrived: tell the customer it was credited, do not reverse, do not escalate."
+Decided by: Demiladepy, at 2026-10-11T13:28:57+00:00
+
+1. Read the pack and policy/store.py (see conditions_hold) and the receipts in the pack.
+2. Write policy/rules/switch-failed-but-credited-v1.json with exactly these keys:
+   rule_id ("switch-failed-but-credited-v1"), case_type (the pack's case_type), decision (the human's words,
+   verbatim), instructions (what the agent must do and must not do, in plain imperative
+   sentences, consistent with the decision), customer_line (one sentence the agent may
+   adapt for the customer, with no amounts or dates), conditions (a list of
+   {"op", "field", "equals"} checks on the latest reads that identify this case type,
+   taken from the pack's receipts), decided_by, decided_at, source_case
+   ({"escalation_id", "seed", "trace_id"} from the pack).
+3. Write tests/policy/test_switch-failed-but-credited-v1.py (create tests/policy/__init__.py if missing) that
+   checks: the rule loads; policy.store.lookup(case_type) returns it; conditions_hold is
+   true for the pack's receipts; conditions_hold is false for a counter-example where the
+   switch says failed and the beneficiary was NOT credited.
+4. Run: python -m pytest tests/policy -q   and fix your files until it passes.
+5. Commit only those files plus the pack:
+   git add policy/rules/switch-failed-but-credited-v1.json tests/policy policy/inbox/ESC-0021.json
+   git commit with subject "Policy switch-failed-but-credited-v1: <what the rule does, under 60 chars>" and a
+   body that quotes the decision, names Demiladepy, and cites escalation ESC-0021,
+   seed 21 and neatlogs trace d12137202386aec8ce79d8349350cfa8. End the message with:
+   Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Do not edit any other file. Do not push.
