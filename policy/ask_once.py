@@ -177,14 +177,16 @@ def decide(escalation_id: str, decision: str, by: str, rule_id: str | None, dry_
     if not claude:
         sys.exit("Claude Code CLI not found on PATH")
     cmd = [
-        claude, "-p", prompt,
+        claude, "-p",
         "--permission-mode", "acceptEdits",
         "--allowedTools", "Read", "Write", "Edit", "Glob", "Grep",
         "Bash(python -m pytest:*)", "Bash(git add:*)", "Bash(git commit:*)", "Bash(git status:*)",
         "Bash(git diff:*)", "Bash(mkdir:*)",
     ]
     print(f"Claude Code is writing rule {rule_id} from {escalation_id} ...", flush=True)
-    result = subprocess.run(cmd, cwd=ROOT, stdin=subprocess.DEVNULL)
+    # The prompt goes on stdin: on Windows the claude.cmd shim cuts a multi-line
+    # argument at its first newline.
+    result = subprocess.run(cmd, cwd=ROOT, input=prompt, text=True, encoding="utf-8")
     sys.exit(result.returncode)
 
 
