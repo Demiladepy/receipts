@@ -214,7 +214,7 @@
 
   <script>
     const NAMES = { v1: "v1 · no gate", v2: "v2 · reply gate", v3: "v3 · reply + action gate" };
-    const state = { seed: 28, rep: 2, pair: ["v1", "v3"] };
+    const state = { seed: 28, rep: 3, pair: ["v1", "v3"] };
     const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
     const fmt = (n) => Number(n).toLocaleString("en-US");
 

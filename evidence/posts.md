@@ -1,6 +1,6 @@
 # #neatHack posts
 
-Drafts. Numbers are from `runs/*-stress-x3.jsonl` (30 seeds × 3 runs per version, gpt-4.1-mini). Attach real screenshots: the neatlogs trace view, and the demo page at https://receipts-tau-liard.vercel.app/#cases (seed 28, run 2, v1 vs v3).
+Drafts. Numbers are from `runs/*-stress-x3.jsonl` (30 seeds × 3 runs per version, gpt-4.1-mini). Attach real screenshots: the neatlogs trace view, and the demo page at https://receipts-tau-liard.vercel.app/#cases (seed 28, run 3, v1 vs v3).
 
 ## Post 2: "My agent lied" (thread)
 
@@ -11,7 +11,7 @@ Day 2 of #neatHack. My agent lied to a customer.
 
 The ledger never posted it. The @neatlogs trace shows why: no read after the write.
 
-[screenshot: neatlogs trace, seed 28 v1, `b2074a54abad39f688ce970efccba7b4`]
+[screenshot: neatlogs trace, seed 28 v1 run 3, `cb094350ed08c4d6b183f83622a8e617`]
 
 **2/**
 So Receipts now can't send a sentence it can't prove.
@@ -24,7 +24,7 @@ Every claim cites a receipt: the neatlogs span id of the tool call behind it. A 
 **3/**
 Then the traces caught something worse.
 
-With honest replies, v2 got bolder with money. It reversed 15 transfers it shouldn't have, some already credited. That pays the customer twice.
+With honest replies, v2 got bolder with money. It reversed 11 transfers it shouldn't have, some already credited. That pays the customer twice.
 
 The verifier gated words, not actions.
 
@@ -32,9 +32,9 @@ The verifier gated words, not actions.
 v3 gates the action too: no reversal without receipts for debit open, switch failed, beneficiary not credited, under the limit.
 
 Same 30 seeds, 3 runs each, graded against hidden ground truth:
-resolved correctly 58 → 72 → 90/90
-false claims sent 30 → 0 → 0
-harmful reversals 3 → 15 → 0
+resolved correctly 58 → 79 → 90/90
+false claims sent 31 → 0 → 0
+harmful reversals 3 → 11 → 0
 $0.0047 per case
 
 **5/**
