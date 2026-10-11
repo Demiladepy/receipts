@@ -3,7 +3,7 @@
   "checkpoint_id": "01M4NJZC8K27Y8Q8X9Z1HTH5S9",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 2,
+  "checkpoints_count": 3,
   "files_touched": [
     "evidence/entire-graph/checkpoint-255f3df-policy-switch-failed-but-credited.txt",
     "evidence/entire-graph/checkpoint-6fda35d-action-gate-limit.txt",
@@ -18,6 +18,13 @@
       "transcript": "/0/full.jsonl",
       "compact_transcript": "/0/transcript.jsonl",
       "content_hash": "/0/content_hash.txt",
+      "prompt": ""
+    },
+    {
+      "metadata": "/1/metadata.json",
+      "transcript": "/1/full.jsonl",
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
       "prompt": ""
     }
   ],
