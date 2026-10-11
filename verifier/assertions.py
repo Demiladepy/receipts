@@ -164,6 +164,9 @@ def check_claim(claim: Claim, book: ReceiptBook) -> ClaimResult:
                                          f"cite {allowed}.{hint}")
     if not receipt.ok or receipt.value is None:
         return ClaimResult(claim, False, f"{receipt.op} failed with {receipt.error}; it proves nothing")
+    if claim.assertion == "policy" and receipt.value.get("found") is not True:
+        return ClaimResult(claim, False, "that lookup found no rule, so there is nothing to cite. "
+                                         "Drop this claim; internal policy is not news to the customer")
     if not rule.holds(receipt.value, _coerce(claim.value)):
         return ClaimResult(claim, False, f"{receipt.op} does not say that ({rule.describe})")
     if claim.assertion == "switch_status":
