@@ -1,0 +1,40 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4MQC602C4CFS40K9YSRJTME",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    ".env.example",
+    "agent/bench.py",
+    "agent/llm.py",
+    "agent/llm_agent.py",
+    "agent/llm_prompts.py",
+    "agent/receipts.py",
+    "agent/truth.py",
+    "policy/rules/.gitkeep",
+    "policy/store.py",
+    "requirements.txt",
+    "sim/chaos.py",
+    "sim/models.py",
+    "sim/stress.py",
+    "tests/test_llm_agent.py",
+    "verifier/assertions.py"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 144,
+    "cache_creation_tokens": 143685,
+    "cache_read_tokens": 16745977,
+    "output_tokens": 72249,
+    "api_call_count": 72
+  }
+}

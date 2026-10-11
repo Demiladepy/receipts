@@ -1,0 +1,105 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4MQC602C4CFS40K9YSRJTME",
+  "session_id": "88462877-3c46-4f71-be91-c0af4af70096",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T05:36:09.4651169Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    ".env.example",
+    "agent/bench.py",
+    "agent/llm.py",
+    "agent/llm_agent.py",
+    "agent/llm_prompts.py",
+    "agent/receipts.py",
+    "agent/truth.py",
+    "policy/rules/.gitkeep",
+    "policy/store.py",
+    "requirements.txt",
+    "sim/chaos.py",
+    "sim/models.py",
+    "sim/stress.py",
+    "tests/test_llm_agent.py",
+    "verifier/assertions.py"
+  ],
+  "agent": "Claude Code",
+  "model": "claude-opus-5-5",
+  "turn_id": "3a6e65e47d4d",
+  "checkpoint_transcript_start": 258,
+  "transcript_lines_at_start": 258,
+  "compact_transcript_start": 38,
+  "token_usage": {
+    "input_tokens": 144,
+    "cache_creation_tokens": 143685,
+    "cache_read_tokens": 16745977,
+    "output_tokens": 72249,
+    "api_call_count": 72
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_01GN8aKes8qkRR8S1jCTSZsS",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "anthropic-skills:built-in-browser"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "b500514f67e8",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 188,
+        "end": 189,
+        "entry_ids": [
+          "11724283-b52f-4b33-b6e1-5ec9dbdb21fb"
+        ],
+        "tool_use_id": "toolu_01GN8aKes8qkRR8S1jCTSZsS"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01GN8aKes8qkRR8S1jCTSZsS"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: anthropic-skills:built-in-browser",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T05:36:09.3852353Z",
+    "agent_lines": 832,
+    "agent_removed": 1,
+    "human_added": 228,
+    "human_modified": 435,
+    "human_removed": 0,
+    "total_committed": 1495,
+    "total_lines_changed": 1496,
+    "agent_percentage": 55.68181818181818,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1267,
+      "agent_lines_removed": 99
+    }
+  ]
+}
