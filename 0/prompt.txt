@@ -1,0 +1,28 @@
+i am not changing the key because i cant and quite frankly it works so nothing is affected and the hack is judged a=under 5 -6 days so nothing important is lost , dodo payment isnt supported in my country and i think we can use that in our storyline and call out the discrimnation subtly and find an alt and for the cladue sessuon i dont know but help me run itcfo.ai inputs: measured, not assumed
+Give this to Ari in the Receipts plan. Every number here comes from runs/v3-stress-x3.jsonl (90 runs of v3 on the 30 stress seeds, gpt-4.1-mini at list price $0.40 / $1.60 per 1M tokens), unless it is marked as an assumption.
+
+Per case, measured
+Input	Value	Source
+Model cost per case, mean	$0.0047	token usage on 90 runs
+Model cost per case, median / worst	$0.0049 / $0.0139	same
+Model cost by case type	no action $0.0040 · reversal $0.0062 · escalation $0.0045	same
+Tokens per case	~9,900 in, ~470 out, 5.5 model calls	same
+Escalated to a human, today	66% of cases (59 / 90)	escalated_to_human
+Of those, not actually needed	14 / 90 runs	unnecessary_escalations
+False claims sent / harmful reversals	0 / 0	ground-truth audit
+What drives margin: human escalations, not tokens
+At $0.0047 a case, model cost is a rounding error next to a human reviewer. The lever is the escalation rate, and ask-once is how it falls: each committed decision removes a whole case type from the human queue. Model the escalation rate as a schedule:
+
+Stage	Escalation rate	Note
+Today (no committed policy)	66%	measured
+After decisions 1 and 2 (switch-failed-but-credited, agreed credit)	measure after replay	fill in from the rerun
+Floor	~30%	cases that genuinely need a person: over-limit, reversal not posted, a source that never answers
+Assumptions to set in the model (mark them as such)
+Price per resolved complaint (proposal: charge only for replies that pass the verifier, since that is the product).
+Human reviewer cost per escalated case (minutes × loaded hourly cost).
+Complaints per bank per month, banks onboarded per month, churn.
+Platform cost (hosting, neatlogs plan).
+Questions for Ari
+At the measured cost, what price per resolved complaint keeps gross margin above 80% in the downside case where escalations stay at 66%?
+How many months of runway does each 10-point drop in escalation rate buy?
+Which is the better pricing unit for a bank: per resolved complaint, or per complaint received?
