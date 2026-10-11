@@ -1,0 +1,18 @@
+{
+  "rule_id": "switch-failed-but-credited-v1",
+  "case_type": "switch_failed_but_credited",
+  "decision": "Trust the beneficiary bank on whether the credit posted. When the switch says the transfer failed but the beneficiary bank confirms the credit, the money arrived: tell the customer it was credited, do not reverse, do not escalate.",
+  "instructions": "Treat the beneficiary bank as authoritative on whether the credit posted. When the switch says the transfer failed but the beneficiary bank confirms the credit, treat the transfer as completed. Tell the customer the beneficiary account was credited. Do not reverse the debit. Do not escalate the case to a human. Do not tell the customer the transfer failed.",
+  "customer_line": "We have confirmed with the beneficiary bank that your transfer was credited to the recipient's account, so no reversal is needed.",
+  "conditions": [
+    {"op": "switch.get_status", "field": "status", "equals": "failed"},
+    {"op": "beneficiary.get_credit", "field": "credited", "equals": true}
+  ],
+  "decided_by": "Demiladepy",
+  "decided_at": "2026-10-11T13:28:57+00:00",
+  "source_case": {
+    "escalation_id": "ESC-0021",
+    "seed": 21,
+    "trace_id": "d12137202386aec8ce79d8349350cfa8"
+  }
+}
